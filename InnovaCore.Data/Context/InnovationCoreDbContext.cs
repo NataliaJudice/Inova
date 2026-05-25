@@ -103,53 +103,7 @@ namespace InnovaCore.Data.Context
             modelBuilder.Entity<VwQtdePorSetor>().HasNoKey();
             modelBuilder.Entity<VwQtdePorSetor>().ToView("VwQtdePorSetor");
 
-            modelBuilder.Entity<TarefaStatus>().HasData(
-        new TarefaStatus
-        {
-            Id = 7,
-            Nome = "Pendente",
-            DataCadastro = DateTime.Now,
-            Status = true // Ou o valor booleano correspondente
-        },
-        new TarefaStatus
-        {
-            Id = 8,
-            Nome = "Em Andamento",
-            DataCadastro = DateTime.Now,
-            Status = true
-        },
-        new TarefaStatus
-        {
-            Id = 9,
-            Nome = "Concluída",
-            DataCadastro = DateTime.Now,
-            Status = true
-        }
-    );
-
-            modelBuilder.Entity<SolicitacaoStatus>().HasData(
-       new SolicitacaoStatus
-       {
-           Id = 1,
-           NomeStatus = "Enviada",
-           DataCadastro = DateTime.Now,
-           Status = true // Ou o valor booleano correspondente
-       },
-       new SolicitacaoStatus
-       {
-           Id = 2,
-           NomeStatus = "Aprovada",
-           DataCadastro = DateTime.Now,
-           Status = true
-       },
-       new SolicitacaoStatus
-       {
-           Id = 3,
-           NomeStatus = "Inviabilizada",
-           DataCadastro = DateTime.Now,
-           Status = true
-       }
-   );
+           
         }
     }
 }

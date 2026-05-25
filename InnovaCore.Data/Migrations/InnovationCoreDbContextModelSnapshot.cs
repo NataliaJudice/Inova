@@ -34,7 +34,6 @@ namespace InnovaCore.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("EmailResponsavel")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("IdUsuario")
@@ -131,29 +130,6 @@ namespace InnovaCore.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("SolicitacaoStatus");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            DataCadastro = new DateTime(2026, 4, 28, 14, 13, 19, 868, DateTimeKind.Local).AddTicks(9870),
-                            NomeStatus = "Enviada",
-                            Status = true
-                        },
-                        new
-                        {
-                            Id = 2,
-                            DataCadastro = new DateTime(2026, 4, 28, 14, 13, 19, 868, DateTimeKind.Local).AddTicks(9872),
-                            NomeStatus = "Aprovada",
-                            Status = true
-                        },
-                        new
-                        {
-                            Id = 3,
-                            DataCadastro = new DateTime(2026, 4, 28, 14, 13, 19, 868, DateTimeKind.Local).AddTicks(9873),
-                            NomeStatus = "Inviabilizada",
-                            Status = true
-                        });
                 });
 
             modelBuilder.Entity("InnovaCore.Domain.Entities.Tarefa", b =>
@@ -213,29 +189,6 @@ namespace InnovaCore.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("TarefaStatus");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 7,
-                            DataCadastro = new DateTime(2026, 4, 28, 14, 13, 19, 868, DateTimeKind.Local).AddTicks(9720),
-                            Nome = "Pendente",
-                            Status = true
-                        },
-                        new
-                        {
-                            Id = 8,
-                            DataCadastro = new DateTime(2026, 4, 28, 14, 13, 19, 868, DateTimeKind.Local).AddTicks(9733),
-                            Nome = "Em Andamento",
-                            Status = true
-                        },
-                        new
-                        {
-                            Id = 9,
-                            DataCadastro = new DateTime(2026, 4, 28, 14, 13, 19, 868, DateTimeKind.Local).AddTicks(9735),
-                            Nome = "Concluída",
-                            Status = true
-                        });
                 });
 
             modelBuilder.Entity("InnovaCore.Domain.Entities.Temas", b =>
@@ -267,6 +220,9 @@ namespace InnovaCore.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("TarefasAComecar")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TarefasConcluidas")
                         .HasColumnType("int");
 
                     b.Property<int>("TarefasEmAndamento")

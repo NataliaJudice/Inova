@@ -18,6 +18,8 @@ namespace InnovaCore.Services.Interfaces
 
         Task EnviarEmails(int? id, string userEmail, string tituloTarefa, string descricaoTarefa, string status);
         Task RejeitarSolicitacao(int idSolicitacao, string justificativa);
+        Task<IEnumerable<Solicitacao>> ListarPendentesPaginado(string? buscaTexto, int? idSetor, int? idStatus, int skip, int take);
+        Task<IEnumerable<Solicitacao>> ListarSolicitacoesUsuarioPaginado(string idUser, string? buscaTexto, int? idSetor, int? idStatus, int skip, int take);
 
 
     }

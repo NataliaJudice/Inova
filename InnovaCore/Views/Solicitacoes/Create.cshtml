@@ -4,7 +4,6 @@
 @{
     Layout = "_Layout";
 }
-
 <style>
     :root {
         --bg-black: #050505;
@@ -166,7 +165,7 @@
             <p class="subtitulo">Preencha os dados abaixo para enviar sua proposta ao sistema.</p>
         </div>
 
-        <form asp-action="Create" method="post" autocomplete="off" id="formProposta">
+        <form id="formProposta" autocomplete="off">
             @Html.AntiForgeryToken()
 
             <div class="field-group">
@@ -205,64 +204,107 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('formProposta');
 
-        // 1. Notificações de Erro/Sucesso vindo do Servidor
-        @if (TempData["ErrorMessage"] != null || ViewBag.Error != null)
-        {
-                var msg = TempData["ErrorMessage"] ?? ViewBag.Error;
-                <text>
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Erro na Transmissão',
-                    text: '@msg',
-                    background: '#0d1117',
-                    color: '#fff',
-                    confirmButtonColor: '#ff0055',
-                    customClass: { popup: 'swal-cyber-popup' }
-                });
-                </text>
-        }
+    form.addEventListener('submit', function (e) {
+    e.preventDefault();
 
-        // 2. Interceptação do Formulário para Confirmação
-        const form = document.getElementById('formProposta');
+    // Executa a validação nativa de campos do HTML5 antes de disparar o SweetAlert
+    if (!form.checkValidity()) {
+    form.reportValidity();
+    return;
+    }
 
-        form.addEventListener('submit', function (e) {
-            e.preventDefault();
+    Swal.fire({
+    title: 'Confirmar Envio?',
+    text: "Sua proposta será enviada para análise técnica e e-mails serão disparados.",
+    icon: 'question',
+    showCancelButton: true,
+    background: '#0d1117',
+    color: '#fff',
+    confirmButtonColor: '#00e5ff',
+    cancelButtonColor: '#30363d',
+    confirmButtonText: 'Sim, transmitir!',
+    cancelButtonText: 'Cancelar',
+    customClass: { popup: 'swal-cyber-popup' }
+    }).then((result) => {
+    if (result.isConfirmed) {
+    // Modal de Loading Ciberpunk
+    Swal.fire({
+    title: 'Processando...',
+    html: 'Sincronizando dados com a rede InovaUGB.',
+    allowOutsideClick: false,
+    didOpen: () => { Swal.showLoading(); },
+    background: '#0d1117',
+    color: '#fff',
+    customClass: { popup: 'swal-cyber-popup' }
+    });
 
-            if (!form.checkValidity()) {
-                form.reportValidity();
-                return;
-            }
+    // Payload mapeado exatamente com as propriedades da SolicitacaoCreateViewModel
+    const payload = {
+    Titulo: document.getElementById('Titulo').value,
+    IdSetor: parseInt(document.getElementById('IdSetor').value),
+    Descricao: document.getElementById('Descricao').value
+    };
 
-            Swal.fire({
-                title: 'Confirmar Envio?',
-                text: "Sua proposta será enviada para análise técnica e e-mails serão disparados.",
-                icon: 'question',
-                showCancelButton: true,
-                background: '#0d1117',
-                color: '#fff',
-                confirmButtonColor: '#00e5ff',
-                cancelButtonColor: '#30363d',
-                confirmButtonText: 'Sim, transmitir!',
-                cancelButtonText: 'Cancelar',
-                customClass: { popup: 'swal-cyber-popup' }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire({
-                        title: 'Processando...',
-                        html: 'Sincronizando dados com a rede InovaUGB.',
-                        allowOutsideClick: false,
-                        didOpen: () => { Swal.showLoading(); },
-                        background: '#0d1117',
-                        color: '#fff',
-                        customClass: { popup: 'swal-cyber-popup' }
-                    });
-                    form.submit();
-                }
-            });
-        });
+    const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+    fetch('@Url.Action("Create", "Solicitacoes")', {
+    method: 'POST',
+    headers: {
+    'Content-Type': 'application/json',
+    'RequestVerificationToken': token
+    },
+    body: JSON.stringify(payload)
+    })
+    .then(response => {
+    if (!response.ok) {
+    throw new Error('Falha na resposta do servidor.');
+    }
+    return response.json();
+    })
+    .then(data => {
+    if (data.success) {
+    Swal.fire({
+    icon: 'success',
+    title: 'Transmissão Concluída',
+    text: data.message,
+    background: '#0d1117',
+    color: '#fff',
+    confirmButtonColor: '#00e5ff',
+    customClass: { popup: 'swal-cyber-popup' }
+    }).then(() => {
+    // Redireciona usando a URL do back-end, com fallback seguro caso mude algo
+    window.location.href = data.redirectUrl || '@Url.Action("ListarSolicitacoesUsuario", "Solicitacoes")';
+    });
+    } else {
+    // Se cair aqui, o ModelState gerou erro e o back retornou success: false
+    Swal.fire({
+    icon: 'error',
+    title: 'Inconsistência na Rede',
+    text: data.message,
+    background: '#0d1117',
+    color: '#fff',
+    confirmButtonColor: '#ff0055',
+    customClass: { popup: 'swal-cyber-popup' }
+    });
+    }
+    })
+    .catch((error) => {
+    Swal.fire({
+    icon: 'error',
+    title: 'Erro de Conexão',
+    text: 'Não foi possível estabelecer contato com a central de dados ou processar o payload.',
+    background: '#0d1117',
+    color: '#fff',
+    confirmButtonColor: '#ff0055',
+    customClass: { popup: 'swal-cyber-popup' }
+    });
+    });
+    }
+    });
+    });
     });
 </script>

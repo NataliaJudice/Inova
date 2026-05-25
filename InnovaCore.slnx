@@ -1,6 +1,8 @@
 <Solution>
-  <Project Path="InnovaCore.Data/InnovaCore.Data.csproj" />
+  <Project Path="InnovaCore.Data/InnovaCore.Infra.Data.csproj" />
   <Project Path="InnovaCore.Domain/InnovaCore.Domain.csproj" />
-  <Project Path="InnovaCore.Services/InnovaCore.Services.csproj" />
+  <Project Path="InnovaCore.Infra.Ioc/InnovaCore.Infra.Ioc.csproj" Id="0f4d4ee0-1199-48dd-b041-1535d3d523e8" />
+  <Project Path="InnovaCore.Services/InnovaCore.Application.csproj" />
+  <Project Path="InnovaCore.Tests/InnovaCore.Tests.csproj" Id="32fff247-5e84-4e0f-912e-3a824324bfb7" />
   <Project Path="InnovaCore/InnovaCore.csproj" />
 </Solution>

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InnovaCore.Data.Migrations
 {
     [DbContext(typeof(InnovationCoreDbContext))]
-    [Migration("20260428170153_ADDSTATUS")]
-    partial class ADDSTATUS
+    [Migration("20260520024256_mig6")]
+    partial class mig6
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -37,7 +37,6 @@ namespace InnovaCore.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("EmailResponsavel")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("IdUsuario")
@@ -134,29 +133,6 @@ namespace InnovaCore.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("SolicitacaoStatus");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            DataCadastro = new DateTime(2026, 4, 28, 14, 1, 53, 494, DateTimeKind.Local).AddTicks(7254),
-                            NomeStatus = "Enviada",
-                            Status = true
-                        },
-                        new
-                        {
-                            Id = 2,
-                            DataCadastro = new DateTime(2026, 4, 28, 14, 1, 53, 494, DateTimeKind.Local).AddTicks(7268),
-                            NomeStatus = "Aprovada",
-                            Status = true
-                        },
-                        new
-                        {
-                            Id = 3,
-                            DataCadastro = new DateTime(2026, 4, 28, 14, 1, 53, 494, DateTimeKind.Local).AddTicks(7270),
-                            NomeStatus = "Inviabilizada",
-                            Status = true
-                        });
                 });
 
             modelBuilder.Entity("InnovaCore.Domain.Entities.Tarefa", b =>
@@ -247,6 +223,9 @@ namespace InnovaCore.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("TarefasAComecar")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TarefasConcluidas")
                         .HasColumnType("int");
 
                     b.Property<int>("TarefasEmAndamento")

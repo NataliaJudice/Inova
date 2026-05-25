@@ -13,13 +13,14 @@
     }
 
     :root {
-        --kanban-bg: #050505;
-        --col-bg: #0d1117;
+        --kanban-bg: #030307;
+        --col-bg: #090d14;
         --cyan-neon: #00e5ff;
         --yellow-neon: #ffca28;
-        --green-neon: #66bb6a;
-        --border-color: #1a1a1a;
-        --card-bg: #161b22;
+        --green-neon: #00ff9d;
+        --border-color: #1f2937;
+        --card-bg: rgba(22, 27, 34, 0.7);
+        --card-hover-bg: rgba(31, 38, 48, 0.9);
     }
 
     body {
@@ -31,23 +32,128 @@
     .pipeline-container {
         min-height: 100vh;
         padding-bottom: 50px;
+        background: radial-gradient(circle at top right, rgba(0, 229, 255, 0.03), transparent 40%), radial-gradient(circle at bottom left, rgba(112, 0, 255, 0.02), transparent 40%);
     }
 
-    .header-section {
-        padding: 40px 40px 10px 40px;
+    /* CONTROL PANEL HEADER */
+    .dashboard-header {
+        padding: 40px 40px 20px 40px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        background: rgba(9, 13, 20, 0.5);
+        backdrop-filter: blur(10px);
     }
 
-    .header-section h1 {
+    .header-main-title h1 {
         font-weight: 900;
-        letter-spacing: 2px;
-        font-size: 2rem;
+        letter-spacing: 3px;
+        font-size: 2.2rem;
         text-transform: uppercase;
+        background: linear-gradient(45deg, #fff, #9ca3af);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin: 0 0 5px 0;
     }
+
+    .header-main-title p {
+        color: #6b7280;
+        font-size: 0.85rem;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        margin: 0;
+    }
+
+    /* FILTROS CYBERPUNK MODERNIZADOS */
+    .filter-panel {
+        background: rgba(9, 13, 20, 0.4);
+        border: 1px solid rgba(0, 229, 255, 0.1);
+        border-radius: 20px;
+        padding: 24px;
+        backdrop-filter: blur(12px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(0, 229, 255, 0.02);
+        position: relative;
+    }
+
+    .filter-group-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+        width: 100%;
+    }
+
+    .filter-icon-prefix {
+        position: absolute;
+        left: 16px;
+        color: #4b5563;
+        font-size: 1.1rem;
+        pointer-events: none;
+        transition: color 0.3s ease;
+        z-index: 5;
+    }
+
+    .filter-input-cyber {
+        background: #050811 !important;
+        border: 1px solid #1f2937 !important;
+        color: #fff !important;
+        padding: 14px 16px 14px 46px !important;
+        border-radius: 12px !important;
+        font-size: 0.9rem !important;
+        letter-spacing: 0.5px;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+        width: 100%;
+    }
+
+        .filter-input-cyber:focus {
+            border-color: var(--cyan-neon) !important;
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.15) !important;
+            background: #070c1a !important;
+        }
+
+    .filter-group-wrapper:focus-within .filter-icon-prefix {
+        color: var(--cyan-neon);
+        text-shadow: 0 0 8px rgba(0, 229, 255, 0.5);
+    }
+
+    select.filter-input-cyber {
+        appearance: none;
+        cursor: pointer;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%234b5563' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e") !important;
+        background-repeat: no-repeat !important;
+        background-position: right 16px center !important;
+        background-size: 12px 12px !important;
+    }
+
+        select.filter-input-cyber:focus {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%2300e5ff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e") !important;
+        }
+
+    .btn-cyber-clean {
+        background: transparent !important;
+        color: #9ca3af !important;
+        border: 1px solid #374151 !important;
+        border-radius: 12px !important;
+        padding: 14px 20px !important;
+        font-weight: 700 !important;
+        font-size: 0.85rem !important;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        transition: all 0.3s ease !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+        .btn-cyber-clean:hover {
+            border-color: #ef4444 !important;
+            color: #fff !important;
+            background: rgba(239, 68, 68, 0.08) !important;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.15);
+        }
 
     /* KANBAN WRAPPER */
     .kanban-wrapper {
         display: flex;
-        gap: 20px;
+        gap: 25px;
         padding: 20px 40px;
         overflow-x: auto;
         align-items: flex-start;
@@ -55,275 +161,753 @@
 
     .kanban-column {
         flex: 1;
-        min-width: 320px;
+        min-width: 330px;
         background: var(--col-bg);
-        border-radius: 25px;
-        border: 1px solid var(--border-color);
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
         padding: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(10px);
     }
 
     .column-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 25px;
-        padding-bottom: 10px;
+        margin-bottom: 20px;
+        padding-bottom: 14px;
         border-bottom: 2px solid;
     }
 
-    .column-header h3 {
-        font-size: 0.8rem;
-        font-weight: 900;
-        letter-spacing: 2px;
-        margin: 0;
+        .column-header h3 {
+            font-size: 0.85rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            margin: 0;
+            text-transform: uppercase;
+        }
+
+    /* CONTAINER EM LISTA ROLÁVEL */
+    .card-list {
+        max-height: calc(100vh - 280px);
+        min-height: 250px;
+        overflow-y: auto;
+        padding-right: 4px;
     }
 
-    /* CARDS */
+        .card-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .card-list::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .card-list::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+            .card-list::-webkit-scrollbar-thumb:hover {
+                background: var(--cyan-neon);
+            }
+
+    /* DESIGN DOS CARDS KANBAN */
     .kanban-card {
         background: var(--card-bg);
         border: 1px solid rgba(255, 255, 255, 0.05);
-        border-radius: 18px;
+        border-left: 4px solid var(--border-color);
+        border-radius: 16px;
         padding: 20px;
-        margin-bottom: 15px;
+        margin-bottom: 16px;
         cursor: pointer;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-        max-width: 100%;
+        position: relative;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         overflow: hidden;
     }
 
-    .kanban-card:hover {
-        transform: translateY(-5px);
-        border-color: rgba(0, 229, 255, 0.3);
-        box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+        .kanban-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.02), transparent);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .kanban-card:hover {
+            transform: translateY(-5px);
+            background: var(--card-hover-bg);
+            box-shadow: 0 20px 35px rgba(0, 0, 0, 0.6);
+        }
+
+    .card-list[data-status-id="1"] .kanban-card {
+        border-left-color: var(--cyan-neon);
+    }
+
+        .card-list[data-status-id="1"] .kanban-card:hover {
+            border-color: rgba(0, 229, 255, 0.4);
+            box-shadow: 0 15px 30px rgba(0, 229, 255, 0.1);
+        }
+
+    .card-list[data-status-id="2"] .kanban-card {
+        border-left-color: var(--yellow-neon);
+    }
+
+        .card-list[data-status-id="2"] .kanban-card:hover {
+            border-color: rgba(255, 202, 40, 0.4);
+            box-shadow: 0 15px 30px rgba(255, 202, 40, 0.1);
+        }
+
+    .card-list[data-status-id="3"] .kanban-card {
+        border-left-color: var(--green-neon);
+    }
+
+        .card-list[data-status-id="3"] .kanban-card:hover {
+            border-color: rgba(0, 255, 157, 0.4);
+            box-shadow: 0 15px 30px rgba(0, 255, 157, 0.1);
+        }
+
+    .card-meta-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 14px;
+        gap: 12px;
+        min-width: 0;
+        position: relative;
+        z-index: 1;
     }
 
     .card-id {
+        font-size: 0.7rem;
+        font-weight: 900;
+        letter-spacing: 1px;
+        background: rgba(255, 255, 255, 0.05);
+        padding: 3px 8px;
+        border-radius: 6px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .sector-tag {
         font-size: 0.65rem;
         font-weight: 800;
-        margin-bottom: 10px;
-        display: block;
+        text-transform: uppercase;
         letter-spacing: 1px;
+        padding: 4px 10px;
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        color: #9ca3af;
+        display: inline-block;
+        max-width: 160px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        vertical-align: middle;
+        transition: 0.3s;
+    }
+
+    .kanban-card:hover .sector-tag {
+        color: #fff;
+        background: rgba(255, 255, 255, 0.07);
+        border-color: rgba(255, 255, 255, 0.15);
     }
 
     .card-title {
         font-weight: 700;
-        color: #fff;
+        color: #f3f4f6;
         font-size: 1rem;
-        margin-bottom: 15px;
+        margin-bottom: 18px;
         display: block;
         line-height: 1.4;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        position: relative;
+        z-index: 1;
     }
 
     .card-footer-info {
         display: flex;
         align-items: center;
-        font-size: 0.7rem;
-        color: #888;
-        border-top: 1px solid rgba(255,255,255,0.05);
+        font-size: 0.72rem;
+        color: #9ca3af;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
         padding-top: 12px;
+        position: relative;
+        z-index: 1;
     }
 
-    /* MODAL */
-    .modal-content {
-        background-color: #0d1117;
-        border: 1px solid #30363d;
-        border-radius: 28px;
+        .card-footer-info span i {
+            color: #6b7280;
+        }
+
+    .js-card-responsavel {
+        font-weight: 600;
+        transition: 0.3s;
+    }
+
+    .kanban-card:hover .js-card-responsavel {
+        color: #fff !important;
+    }
+
+    .arrow-icon {
+        color: #4b5563;
+        transition: transform 0.3s, color 0.3s;
+    }
+
+    .kanban-card:hover .arrow-icon {
+        transform: translateX(3px);
         color: #fff;
-        padding: 1.5rem;
-        box-shadow: 0 25px 50px rgba(0,0,0,0.8);
     }
 
-    .modal-header { border: none; padding-bottom: 1rem; }
-    .modal-footer { border: none; padding-top: 1rem; }
-    
+    /* MODAL TERMINAL OPERACIONAL */
+    .modal-content {
+        background-color: #0b0f19 !important;
+        border: 1px solid rgba(0, 229, 255, 0.15) !important;
+        border-radius: 20px !important;
+        color: #fff;
+        padding: 0.5rem;
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 229, 255, 0.05) !important;
+        backdrop-filter: blur(20px);
+    }
+
+    .modal-header {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+    }
+
     .modal-title {
-        word-break: break-all;
-        line-height: 1.2;
+        font-size: 1.25rem;
+        font-weight: 900;
+        letter-spacing: 0.5px;
+        color: #fff;
     }
 
-    .detail-label { 
-        color: var(--cyan-neon); 
-        font-size: 0.65rem; 
-        font-weight: 800; 
-        letter-spacing: 2px;
-        text-transform: uppercase;
-        margin-bottom: 0.5rem;
+    .info-terminal-box {
+        background: #060a12;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        padding: 14px 16px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        transition: all 0.3s;
+    }
+
+    .responsibility-section {
+        background: linear-gradient(135deg, #060a12, #0d1321);
+        border-color: rgba(0, 229, 255, 0.1);
+    }
+
+    .info-box-value {
+        font-size: 0.95rem;
+        font-weight: 700;
+        margin-top: 4px;
+        display: block;
+        color: #f3f4f6;
+    }
+
+    .small-timestamp {
+        font-family: 'Courier New', Courier, monospace;
+        color: #a0aec0;
+        font-size: 0.85rem !important;
+    }
+
+    .btn-neon-inline {
+        font-size: 0.7rem !important;
+        font-weight: 900 !important;
+        background: transparent !important;
+        color: var(--cyan-neon) !important;
+        border: 1px solid rgba(0, 229, 255, 0.3) !important;
+        padding: 6px 12px !important;
+        border-radius: 8px !important;
+        letter-spacing: 1px;
+        transition: all 0.2s;
+    }
+
+        .btn-neon-inline:hover {
+            background: var(--cyan-neon) !important;
+            color: #000 !important;
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.4);
+        }
+
+    .btn-action-terminal {
+        background: transparent;
+        border: none;
+        color: #8a99ad;
+        font-size: 0.7rem;
+        font-weight: 800;
+        letter-spacing: 1px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        transition: color 0.2s;
+    }
+
+        .btn-action-terminal:hover {
+            color: var(--cyan-neon);
+        }
+
+    .spec-input {
+        background: #030508 !important;
+        border: 1px solid #21262d !important;
+        color: #fff !important;
+        font-size: 0.85rem !important;
+        padding: 10px 14px !important;
+        border-radius: 8px 0 0 8px !important;
+    }
+
+        .spec-input:focus {
+            border-color: var(--cyan-neon) !important;
+            box-shadow: none !important;
+        }
+
+    .btn-save-neon {
+        background: var(--cyan-neon) !important;
+        color: #000 !important;
+        border: none !important;
+        font-weight: 800 !important;
+        font-size: 0.75rem !important;
+        border-radius: 0 8px 8px 0 !important;
     }
 
     .desc-box {
-        background: #050505;
-        border: 1px solid #21262d;
-        border-radius: 15px;
-        padding: 20px;
-        color: #8b949e;
-        font-size: 0.9rem;
-        line-height: 1.6;
-        word-wrap: break-word;
-        overflow-wrap: break-word;
-        word-break: break-all;
-        max-height: 300px;
-        overflow-y: auto;
+        background: #030508 !important;
+        border: 1px solid rgba(255, 255, 255, 0.05) !important;
+        border-radius: 12px !important;
+        padding: 16px !important;
+        color: #abb7c5 !important;
+        font-size: 0.9rem !important;
+        line-height: 1.6 !important;
+        max-height: 200px !important;
     }
 
-    .sortable-ghost {
-        opacity: 0.1;
-        background: var(--cyan-neon) !important;
+    .btn-dark-terminal {
+        background: rgba(255, 255, 255, 0.02);
+        color: #9ca3af;
+        border: 1px solid #21262d;
+        border-radius: 30px;
+        padding: 10px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        transition: 0.2s;
+    }
+
+        .btn-dark-terminal:hover {
+            background: rgba(255, 255, 255, 0.06);
+            color: #fff;
+            border-color: #30363d;
+        }
+
+    .animate-fade-in {
+        animation: fadeIn 0.25s ease-out;
+    }
+
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-5px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .swal-cyber-popup {
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 24px !important;
+        background: #0d1117 !important;
     }
 </style>
 
 <div class="pipeline-container">
-    <div class="header-section">
-        <h1>FLUXO DE <span style="color:var(--cyan-neon)">TAREFAS</span></h1>
+
+    <div class="dashboard-header">
+        <div class="header-main-title mb-4">
+            <h1>Fluxo de <span style="color:var(--cyan-neon)">Tarefas</span></h1>
+            <p><i class="bi bi-shield-check text-info"></i> Painel de Controle Operacional Centralizado</p>
+        </div>
+
+        <!-- PAINEL DE CONTROLE DE FILTROS MODERNIZADO -->
+        <div class="filter-panel mb-2 animate-fade-in">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="filter-panel-group">
+                        <div class="filter-group-wrapper">
+                            <i class="bi bi-search filter-icon-prefix"></i>
+                            <input type="text" id="inpFiltroTexto" class="form-control filter-input-cyber" placeholder="Buscar por título, id ou palavras-chave..." oninput="triggerDebounceFiltro()">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="filter-panel-group">
+                        <div class="filter-group-wrapper">
+                            <i class="bi bi-diagram-3 filter-icon-prefix"></i>
+                            <select id="selFiltroSetor" class="form-select filter-input-cyber" onchange="executarFiltrosGlobais()">
+                                <option value="">-- Todos os Setores --</option>
+                                @if (ViewBag.Setores != null)
+                                {
+                                    foreach (var setor in ViewBag.Setores)
+                                    {
+                                        <option value="@setor.Id">@setor.Nome</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-cyber-clean w-100 h-100" onclick="limparFiltrosOperacionais()">
+                        <i class="bi bi-arrow-counterclockwise"></i> Limpar
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
+    <!-- COLUNAS KANBAN ASSÍNCRONAS -->
     <div class="kanban-wrapper">
-        @foreach (var status in new[] { 
-            new { Id = 7, Nome = "A Fazer", Cor = "var(--cyan-neon)", Label = "A Fazer" },
-            new { Id = 8, Nome = "Em Andamento", Cor = "var(--yellow-neon)", Label = "Em Andamento" },
-            new { Id = 9, Nome = "Concluído", Cor = "var(--green-neon)", Label = "Concluído" } 
+        @foreach (var status in new[] {
+            new { Id = 1, Nome = "A Fazer", Cor = "var(--cyan-neon)", Label = "A Fazer" },
+            new { Id = 2, Nome = "Em Andamento", Cor = "var(--yellow-neon)", Label = "Em Andamento" },
+            new { Id = 3, Nome = "Concluído", Cor = "var(--green-neon)", Label = "Concluído" }
         })
         {
             <div class="kanban-column">
                 <div class="column-header" style="border-color: @status.Cor;">
                     <h3 style="color: @status.Cor;">@status.Nome</h3>
-                    <span class="badge rounded-pill bg-dark border border-secondary text-white-50">@Model.Count(t => t.IdTarefaStatus == status.Id)</span>
+                    <span class="badge rounded-pill bg-dark border border-secondary text-white-50" id="badge-status-@status.Id">0</span>
                 </div>
                 <div class="card-list" data-status-id="@status.Id" data-color="@status.Cor" data-status-name="@status.Label">
-                    @foreach (var tarefa in Model.Where(t => t.IdTarefaStatus == status.Id))
-                    {
-                        <div class="kanban-card" data-id="@tarefa.Id" 
-                             data-titulo="@tarefa.Solicitacao?.Titulo" 
-                             data-desc="@tarefa.Solicitacao?.Descricao"
-                             data-setor="@tarefa.Solicitacao?.Tema?.TituloTema"
-                             data-date="@tarefa.Datacadastro?.ToString("dd/MM/yyyy HH:mm")"
-                             data-responsavel="@tarefa.NomeResponsavel"
-                             onclick="verDetalhes(this)">
-                            
-                            <span class="card-id js-card-id" style="color: @status.Cor">#@tarefa.Id</span>
-                            <span class="card-title" title="@tarefa.Solicitacao?.Titulo">@tarefa.Solicitacao?.Titulo</span>
-                            
-                            <div class="card-footer-info">
-                                <span><i class="bi bi-clock me-1"></i> @tarefa.Datacadastro?.ToString("dd/MM")</span>
-                                
-                                <span class="js-card-responsavel text-truncate ms-2" style="max-width: 100px; color: var(--cyan-neon);">
-                                    @(string.IsNullOrEmpty(tarefa.NomeResponsavel) ? "Sem responsável" : tarefa.NomeResponsavel)
-                                </span>    
-                                <i class="bi bi-arrow-right-short fs-5 ms-auto"></i>
-                            </div>
-                        </div>
-                    }
+                    <!-- Cards injetados dinamicamente via JS -->
                 </div>
             </div>
         }
     </div>
 </div>
 
+<!-- CONTAINER MODAL DETALHES -->
 <div class="modal fade" id="modalTarefa" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-md">
         <div class="modal-content">
-            <div class="modal-header d-flex flex-column align-items-start">
-                <p id="mSetor" class="detail-label"></p>
-                <h4 class="modal-title fw-900 text-white w-100" id="mTitulo"></h4>
+
+            <div class="modal-header d-flex align-items-center justify-content-between pb-3">
+                <div class="d-flex flex-column">
+                    <span class="detail-label"><i class="bi bi-terminal-fill me-1"></i>DADOS DA TAREFA</span>
+                    <h4 class="modal-title text-white fw-900" id="mTitulo"></h4>
+                </div>
+                <button type="button" class="btn-close btn-close-white opacity-50" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                <div class="row mb-4 mt-2">
+
+            <div class="modal-body py-3">
+                <div class="row g-3 mb-3">
                     <div class="col-6">
-                        <p class="detail-label">Timestamp</p>
-                        <small id="mDate" class="text-white-50 d-block"></small>
+                        <div class="info-terminal-box">
+                            <span class="detail-label">SETOR RESPONSAVEL</span>
+                            <span id="mSetor" class="info-box-value text-white"></span>
+                        </div>
                     </div>
-                    <div class="col-6 text-end">
-                        <p class="detail-label">Status</p>
-                        <span id="mStatus" class="fw-bold d-block"></span>
+
+                    <div class="col-6">
+                        <div class="info-terminal-box">
+                            <span class="detail-label">STATUS ATUAL</span>
+                            <span id="mStatus" class="info-box-value fw-bold"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="info-terminal-box">
+                            <span class="detail-label">DATA DE ENVIO</span>
+                            <span id="mDate" class="info-box-value small-timestamp"></span>
+                        </div>
                     </div>
                 </div>
-                
-                <div class="row mb-4">
-                    <div class="col-12">
-                        <p class="detail-label">Responsável</p>
-                        
-                        <div id="boxMostrarResponsavel" class="d-flex align-items-center">
-                            <span id="mResponsavelNome" class="text-white fw-bold me-2"></span>
 
-                            <i id="btnEditarResponsavel" class="bi bi-pencil-square text-info cursor-pointer me-3"
-                               style="cursor: pointer; display: none;"
-                               onclick="mostrarInputResponsavel(event)"
-                               title="Editar responsável"></i>
+                <div class="mb-4">
+                    <div class="info-terminal-box responsibility-section">
+                        <div class="d-flex align-items-center justify-content-between w-100">
+                            <div class="d-flex flex-column">
+                                <span class="detail-label">RESPONSÁVEL TÉCNICO</span>
+                                <span id="mResponsavelNome" class="info-box-value fw-bold mt-1"></span>
+                            </div>
 
-                            <button id="btnAdicionarResponsavel" class="btn btn-sm btn-outline-info rounded-pill"
-                                    onclick="mostrarInputResponsavel(event)">
-                                + Adicionar responsável
+                            <button id="btnEditarResponsavel" class="btn-action-terminal" onclick="mostrarInputResponsavel(event)" style="display: none;">
+                                <i class="bi bi-pencil-square text-info"></i> ALTERAR
+                            </button>
+
+                            <button id="btnAdicionarResponsavel" class="btn btn-sm btn-neon-inline" onclick="mostrarInputResponsavel(event)">
+                                <i class="bi bi-person-plus-fill"></i> VINCULAR RESPONSÁVEL
                             </button>
                         </div>
 
-                        <div id="boxEditarResponsavel" style="display: none;" class="mt-2">
-                            <div class="input-group input-group-sm">
-                                <input type="text" id="inputResponsavel" class="form-control bg-dark text-white border-secondary" placeholder="Digite o nome..." autocomplete="off">
-                                <button class="btn btn-info" type="button" onclick="salvarResponsavel(event)">Salvar</button>
+                        <div id="boxEditarResponsavel" style="display: none;" class="w-100 mt-3 border-top border-secondary pt-3 animate-fade-in">
+                            <label class="detail-label mb-2">DIGITE O NOVO RESPONSAVEL</label>
+                            <div class="input-group">
+                                <input type="text" id="inputResponsavel" class="form-control form-control-dark spec-input" placeholder="Nome do operador..." autocomplete="off">
+                                <button class="btn btn-info px-4 btn-save-neon" type="button" onclick="salvarResponsavel(event)">OK</button>
                             </div>
                         </div>
                     </div>
                 </div>
-                
-                <p class="detail-label">Especificações Técnicas</p>
-                <div id="mDesc" class="desc-box"></div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="info-terminal-box">
+                            <p class="detail-label mb-2"><i class="bi bi-file-earmark-code me-1"></i> ESPECIFICAÇÕES DA PROPOSTA</p>
+                            <div id="mDesc" class="desc-box w-100 overflow-auto"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-dark w-100 border-secondary rounded-pill fw-bold" data-bs-dismiss="modal">FECHAR TERMINAL</button>
+
+            <div class="modal-footer border-0 pt-2">
+                <button type="button" class="btn btn-dark-terminal w-100" data-bs-dismiss="modal">
+                    FECHAR TERMINAL DE DADOS
+                </button>
             </div>
+
         </div>
     </div>
 </div>
 
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         let cardAtualAberto = null;
+        let filtroTimerToken = null;
 
-        document.querySelectorAll('.card-list').forEach(el => {
-            new Sortable(el, {
-                group: 'kanban',
-                animation: 250,
-                ghostClass: 'sortable-ghost',
-                onEnd: function (evt) {
-                    const tarefaId = evt.item.getAttribute('data-id');
-                    const novoStatusId = evt.to.getAttribute('data-status-id');
-                    const novaCor = evt.to.getAttribute('data-color');
-                    const cardIdSpan = evt.item.querySelector('.js-card-id');
-                    if (cardIdSpan) cardIdSpan.style.color = novaCor;
-                    updateTarefaStatus(tarefaId, novoStatusId);
-                }
-            });
+        // Repositório em estado de execução que guarda o contador absoluto real retornado do banco
+        const contadoresReaisServer = { 1: 0, 2: 0, 3: 0 };
+
+        const estadoPaginacao = {
+        1: { skip: 0, take: 12, finalAlcancado: false, buscando: false },
+        2: { skip: 0, take: 12, finalAlcancado: false, buscando: false },
+        3: { skip: 0, take: 12, finalAlcancado: false, buscando: false }
+        };
+
+        document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll('.card-list').forEach(listContainer => {
+        new Sortable(listContainer, {
+        group: 'kanban',
+        animation: 250,
+        ghostClass: 'sortable-ghost',
+        onEnd: function (evt) {
+        if (evt.to !== evt.from) {
+        const idTarefa = evt.item.getAttribute('data-id');
+        const origemStatusId = parseInt(evt.from.getAttribute('data-status-id'));
+        const destinoStatusId = parseInt(evt.to.getAttribute('data-status-id'));
+        const novaCorHex = evt.to.getAttribute('data-color');
+        const spanId = evt.item.querySelector('.js-card-id');
+
+        if (spanId) spanId.style.color = novaCorHex;
+
+        // Atualização preditiva local para dar feedback instantâneo na UI
+        contadoresReaisServer[origemStatusId] = Math.max(0, contadoresReaisServer[origemStatusId] - 1);
+        contadoresReaisServer[destinoStatusId] += 1;
+        atualizarBadgesNaTela();
+
+        updateTarefaStatus(idTarefa, destinoStatusId, evt);
+        }
+        }
         });
 
+        listContainer.addEventListener('scroll', function () {
+        if (listContainer.scrollTop + listContainer.clientHeight >= listContainer.scrollHeight - 60) {
+        const statusId = listContainer.getAttribute('data-status-id');
+        carregarProximoLoteStatus(statusId);
+        }
+        });
+        });
+
+        executarFiltrosGlobais();
+        });
+
+        function carregarProximoLoteStatus(statusId) {
+        const contexto = estadoPaginacao[statusId];
+        if (contexto.buscando || contexto.finalAlcancado) return;
+
+        contexto.buscando = true;
+
+        const queryTexto = document.getElementById('inpFiltroTexto').value;
+        const idSetor = document.getElementById('selFiltroSetor').value;
+        const containerDOM = document.querySelector(`.card-list[data-status-id="${statusId}"]`);
+        const corStatus = containerDOM.getAttribute('data-color');
+
+        const endpointUrl = `/Tarefa/GetCardsKanban?search=${encodeURIComponent(queryTexto)}&setorId=${idSetor}&statusId=${statusId}&skip=${contexto.skip}&take=${contexto.take}`;
+
+        fetch(endpointUrl)
+        .then(response => response.json())
+        .then(resultado => {
+        if (resultado.success) {
+        if (resultado.data.length < contexto.take) {
+        contexto.finalAlcancado = true;
+        }
+
+        resultado.data.forEach(cardData => {
+        const htmlCard = renderizarCardTemplate(cardData, corStatus);
+        containerDOM.insertAdjacentHTML('beforeend', htmlCard);
+        });
+
+        contexto.skip += resultado.data.length;
+
+        // Atualiza com o valor real e absoluto trazido diretamente da contagem do banco
+        contadoresReaisServer[statusId] = resultado.totalReal;
+        atualizarBadgesNaTela();
+        }
+        contexto.buscando = false;
+        })
+        .catch(() => {
+        contexto.buscando = false;
+        });
+        }
+
+        function renderizarCardTemplate(item, corHex) {
+        const labelResponsavel = !item.responsavel || item.responsavel.trim() === '' ? 'Sem responsável' : item.responsavel;
+
+        const tituloEscaped = item.titulo ? item.titulo.replace(/"/g, '&quot;') : '';
+        const descEscaped = item.descricao ? item.descricao.replace(/"/g, '&quot;') : '';
+        const setorEscaped = item.setor ? item.setor.replace(/"/g, '&quot;') : '';
+        const respEscaped = item.responsavel ? item.responsavel.replace(/"/g, '&quot;') : '';
+
+        return `
+        <div class="kanban-card animate-fade-in" data-id="${item.id}"
+        data-titulo="${tituloEscaped}"
+        data-desc="${descEscaped}"
+        data-setor="${setorEscaped}"
+        data-date="${item.data}"
+        data-responsavel="${respEscaped}"
+        onclick="verDetalhes(this)">
+        <div class="card-meta-top">
+        <span class="card-id js-card-id" style="color: ${corHex}">#${item.id}</span>
+        <span class="sector-tag">
+        <i class="bi bi-diagram-3 me-1 align-middle"></i> ${item.setor}
+        </span>
+        </div>
+        <span class="card-title" title="${tituloEscaped}">${item.titulo}</span>
+        <div class="card-footer-info">
+        <span><i class="bi bi-clock me-1"></i> ${item.dataCurta}</span>
+        <span class="js-card-responsavel text-truncate ms-2" style="max-width: 130px; color: var(--cyan-neon);">
+        <i class="bi bi-person-badge me-1"></i> ${labelResponsavel}
+        </span>
+        <i class="bi bi-arrow-right-short fs-5 ms-auto arrow-icon"></i>
+        </div>
+        </div>`;
+        }
+
+        function executarFiltrosGlobais() {
+        [1, 2, 3].forEach(statusId => {
+        estadoPaginacao[statusId].skip = 0;
+        estadoPaginacao[statusId].finalAlcancado = false;
+        estadoPaginacao[statusId].buscando = false;
+
+        const container = document.querySelector(`.card-list[data-status-id="${statusId}"]`);
+        if (container) {
+        container.innerHTML = '';
+        carregarProximoLoteStatus(statusId);
+        }
+        });
+        }
+
+        function triggerDebounceFiltro() {
+        clearTimeout(filtroTimerToken);
+        filtroTimerToken = setTimeout(() => {
+        executarFiltrosGlobais();
+        }, 350);
+        }
+
+        function limparFiltrosOperacionais() {
+        document.getElementById('inpFiltroTexto').value = '';
+        document.getElementById('selFiltroSetor').value = '';
+        executarFiltrosGlobais();
+        }
+
+        function atualizarBadgesNaTela() {
+        [1, 2, 3].forEach(statusId => {
+        const badge = document.getElementById(`badge-status-${statusId}`);
+        if (badge) {
+        badge.innerText = contadoresReaisServer[statusId];
+        }
+        });
+        }
+
+        function updateTarefaStatus(id, status, evt) {
+        const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 1500,
+        background: '#0d1117',
+        color: '#fff'
+        });
+
+        Toast.fire({ icon: 'success', title: 'Sincronizando alteração...' });
+
+        fetch('/Tarefa/MudarStatus', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idTarefa: parseInt(id), novoStatus: parseInt(status) })
+        })
+        .then(response => response.json())
+        .then(data => {
+        if (!data.success) {
+        Swal.fire({
+        icon: 'error',
+        title: 'Transição Recusada',
+        text: data.message,
+        background: '#0d1117',
+        color: '#fff'
+        });
+        evt.from.appendChild(evt.item);
+        executarFiltrosGlobais();
+        }
+        })
+        .catch(() => {
+        Swal.fire({
+        icon: 'error',
+        title: 'Falha de Sincronização',
+        text: 'O terminal perdeu estabilidade com o banco de dados. Operação desfeita.',
+        background: '#0d1117',
+        color: '#fff'
+        });
+        evt.from.appendChild(evt.item);
+        executarFiltrosGlobais();
+        });
+        }
+
         function verDetalhes(card) {
-            cardAtualAberto = card;
-            
-            const titulo = card.getAttribute('data-titulo');
-            const desc = card.getAttribute('data-desc');
-            const setor = card.getAttribute('data-setor');
-            const date = card.getAttribute('data-date');
-            const responsavel = card.getAttribute('data-responsavel');
-            const statusName = card.parentElement.getAttribute('data-status-name');
-            const cor = card.parentElement.getAttribute('data-color');
+        cardAtualAberto = card;
 
-            document.getElementById('mTitulo').innerText = titulo;
-            document.getElementById('mDesc').innerText = desc || "Nenhuma descrição técnica disponível.";
-            document.getElementById('mSetor').innerText = setor || "Geral";
-            document.getElementById('mDate').innerText = date;
-            
-            const statusEl = document.getElementById('mStatus');
-            statusEl.innerText = statusName;
-            statusEl.style.color = cor;
+        const titulo = card.getAttribute('data-titulo');
+        const desc = card.getAttribute('data-desc');
+        const setor = card.getAttribute('data-setor');
+        const date = card.getAttribute('data-date');
+        const responsavel = card.getAttribute('data-responsavel');
+        const statusName = card.parentElement.getAttribute('data-status-name');
+        const cor = card.parentElement.getAttribute('data-color');
 
-            // Configuração do Responsável
-                   // Configuração do Responsável no Modal
+        document.getElementById('mTitulo').innerText = titulo;
+        document.getElementById('mDesc').innerText = desc || "Nenhuma especificação disponível.";
+        document.getElementById('mSetor').innerText = setor || "Não Mapeado";
+        document.getElementById('mDate').innerText = date;
+
+        const statusEl = document.getElementById('mStatus');
+        statusEl.innerText = statusName;
+        statusEl.style.color = cor;
+
         const spanNome = document.getElementById('mResponsavelNome');
         const btnAdd = document.getElementById('btnAdicionarResponsavel');
-        const btnEdit = document.getElementById('btnEditarResponsavel'); // Novo elemento
+        const btnEdit = document.getElementById('btnEditarResponsavel');
         const boxEdicao = document.getElementById('boxEditarResponsavel');
         const inputResp = document.getElementById('inputResponsavel');
 
@@ -331,68 +915,82 @@
         inputResp.value = '';
 
         if (!responsavel || responsavel.trim() === '') {
-            spanNome.innerText = '';
-            btnAdd.style.display = 'inline-block';
-            btnEdit.style.display = 'none'; // Esconde o lápis se não tem ninguém
+        spanNome.innerText = 'Sem Alocação';
+        spanNome.style.color = '#6b7280';
+        btnAdd.style.display = 'inline-block';
+        btnEdit.style.display = 'none';
         } else {
-            spanNome.innerText = responsavel;
-            btnAdd.style.display = 'none';   // Esconde o botão de adicionar
-            btnEdit.style.display = 'inline-block'; // Mostra o lápis
+        spanNome.innerText = responsavel;
+        spanNome.style.color = 'var(--cyan-neon)';
+        btnAdd.style.display = 'none';
+        btnEdit.style.display = 'inline-block';
         }
 
-            new bootstrap.Modal(document.getElementById('modalTarefa')).show();
+        new bootstrap.Modal(document.getElementById('modalTarefa')).show();
         }
 
         function mostrarInputResponsavel(event) {
-            event.stopPropagation();
-            document.getElementById('btnAdicionarResponsavel').style.display = 'none';
-            document.getElementById('boxEditarResponsavel').style.display = 'block';
-            document.getElementById('inputResponsavel').focus();
+        event.stopPropagation();
+        document.getElementById('btnAdicionarResponsavel').style.display = 'none';
+        document.getElementById('boxEditarResponsavel').style.display = 'block';
+        document.getElementById('inputResponsavel').focus();
         }
 
         async function salvarResponsavel(event) {
-            event.stopPropagation();
-            
-            const novoNome = document.getElementById('inputResponsavel').value;
-            if (!novoNome || novoNome.trim() === '') return;
+        event.stopPropagation();
 
-            const tarefaId = cardAtualAberto.getAttribute('data-id');
+        const novoNome = document.getElementById('inputResponsavel').value;
+        if (!novoNome || novoNome.trim() === '') return;
 
-            try {
-                // Certifique-se de que a URL corresponde à rota da sua Controller
-                const response = await fetch('/Tarefa/AtribuirResponsavel', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ idTarefa: parseInt(tarefaId), nomeResponsavel: novoNome })
-                });
+        const tarefaId = cardAtualAberto.getAttribute('data-id');
 
-                if (response.ok) {
-                    document.getElementById('boxEditarResponsavel').style.display = 'none';
-                    document.getElementById('mResponsavelNome').innerText = novoNome;
-                    document.getElementById('btnAdicionarResponsavel').style.display = 'none';
-                    
-                    cardAtualAberto.setAttribute('data-responsavel', novoNome);
-                    const spanResponsavelCard = cardAtualAberto.querySelector('.js-card-responsavel');
-                    if(spanResponsavelCard) {
-                        spanResponsavelCard.innerText = novoNome;
-                    }
-                } else {
-                    alert('Erro ao atribuir responsável.');
-                }
-            } catch (error) {
-                console.error("Erro na requisição:", error);
-                alert('Falha de conexão com o servidor.');
-            }
+        Swal.fire({
+        title: 'Atualizando Matriz...',
+        html: 'Vinculando novo responsável técnico.',
+        allowOutsideClick: false,
+        didOpen: () => { Swal.showLoading(); },
+        background: '#0d1117',
+        color: '#fff',
+        customClass: { popup: 'swal-cyber-popup' }
+        });
+
+        try {
+        const response = await fetch('/Tarefa/AtribuirResponsavel', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idTarefa: parseInt(tarefaId), nomeResponsavel: novoNome })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+        Swal.fire({
+        icon: 'success',
+        title: 'Modificação Concluída',
+        text: data.message,
+        background: '#0d1117',
+        color: '#fff',
+        confirmButtonColor: '#00e5ff',
+        customClass: { popup: 'swal-cyber-popup' }
+        });
+
+        document.getElementById('boxEditarResponsavel').style.display = 'none';
+        document.getElementById('mResponsavelNome').innerText = novoNome;
+        document.getElementById('mResponsavelNome').style.color = 'var(--cyan-neon)';
+        document.getElementById('btnAdicionarResponsavel').style.display = 'none';
+        document.getElementById('btnEditarResponsavel').style.display = 'inline-block';
+
+        cardAtualAberto.setAttribute('data-responsavel', novoNome);
+        const spanResponsavelCard = cardAtualAberto.querySelector('.js-card-responsavel');
+        if (spanResponsavelCard) {
+        spanResponsavelCard.innerHTML = `<i class="bi bi-person-badge me-1"></i> ${novoNome}`;
         }
-
-        
-
-        function updateTarefaStatus(id, status) {
-            fetch('/Tarefa/MudarStatus', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ idTarefa: parseInt(id), novoStatus: parseInt(status) })
-            });
+        } else {
+        Swal.fire({ icon: 'error', title: 'Inconsistência', text: data.message, background: '#0d1117', color: '#fff' });
+        }
+        } catch (error) {
+        Swal.fire({ icon: 'error', title: 'Erro de Comunicação', text: 'Sem contato com o terminal de segurança.', background: '#0d1117', color: '#fff' });
+        }
         }
     </script>
 }

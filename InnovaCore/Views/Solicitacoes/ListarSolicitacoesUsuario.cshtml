@@ -16,6 +16,7 @@
         --status-pending: #ffca28;
         --status-approved: #00ff9d;
         --status-rejected: #ff4646;
+        --border-color: #30363d;
     }
 
     body {
@@ -39,6 +40,42 @@
         margin-bottom: 0;
     }
 
+    /* FILTROS CYBERPUNK DO USUÁRIO */
+    .user-filter-box {
+        background: #0d1117;
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 25px;
+    }
+
+    .cyber-input {
+        background: #030508 !important;
+        border: 1px solid var(--border-color) !important;
+        color: #fff !important;
+        border-radius: 10px !important;
+    }
+
+        .cyber-input:focus {
+            border-color: var(--cyan-neon) !important;
+            box-shadow: 0 0 8px rgba(0, 229, 255, 0.2) !important;
+        }
+
+    .btn-cyber-submit {
+        background: transparent;
+        border: 1px solid var(--cyan-neon);
+        color: var(--cyan-neon);
+        font-weight: 700;
+        border-radius: 10px;
+        transition: 0.3s;
+    }
+
+        .btn-cyber-submit:hover {
+            background: var(--cyan-neon);
+            color: #000;
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
+        }
+
     .btn-back-cyber {
         color: var(--text-gray);
         text-decoration: none;
@@ -53,7 +90,6 @@
         transition: 0.3s;
     }
 
-    /* Cards Responsivos */
     .feed-card {
         background: var(--card-bg);
         border: 1px solid #1a1a1a;
@@ -70,62 +106,93 @@
         overflow-wrap: break-word;
     }
 
-    .feed-card:hover {
-        border-color: #333;
-        transform: translateY(-2px);
-        background: #11161d;
-    }
+        .feed-card:hover {
+            border-color: #333;
+            transform: translateY(-2px);
+            background: #11161d;
+        }
 
     .feed-content {
         flex: 1;
-        min-width: 0; /* Importante para o truncamento de texto funcionar em flexbox */
+        min-width: 0;
         margin-right: 15px;
     }
 
-    .feed-content h3 {
-        font-size: clamp(1.1rem, 4vw, 1.4rem);
+        .feed-content h3 {
+            font-size: clamp(1.1rem, 4vw, 1.4rem);
+            font-weight: 800;
+            margin: 10px 0 5px 0;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    /* ==========================================================================
+           BOTAO CARREGAR MAIS CYBERPUNK
+           ========================================================================== */
+    .btn-load-more {
+        width: 100%;
+        background: rgba(13, 17, 23, 0.6);
+        border: 1px dashed var(--cyan-neon);
+        color: var(--cyan-neon);
         font-weight: 800;
-        margin: 10px 0 5px 0;
-        /* Ajuste Mobile: Permite quebra de linha em vez de uma linha infinita */
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        white-space: normal; 
+        font-size: 0.75rem;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        padding: 16px;
+        border-radius: 12px;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        cursor: pointer;
+        box-shadow: inset 0 0 10px rgba(0, 229, 255, 0.05);
     }
 
-    .feed-content p {
-        color: var(--text-gray);
-        font-size: clamp(0.85rem, 3vw, 0.95rem);
-        line-height: 1.4;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
+        .btn-load-more:hover {
+            background: rgba(0, 229, 255, 0.08);
+            border-style: solid;
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.25), inset 0 0 15px rgba(0, 229, 255, 0.1);
+            color: #fff;
+            text-shadow: 0 0 8px var(--cyan-neon);
+            transform: translateY(-1px);
+        }
 
-    /* Ajustes Mobile */
+        .btn-load-more:active {
+            transform: translateY(1px);
+            box-shadow: 0 0 5px rgba(0, 229, 255, 0.2);
+        }
+
+        .feed-content p {
+            color: var(--text-gray);
+            font-size: clamp(0.85rem, 3vw, 0.95rem);
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
     @@media (max-width: 576px) {
         .feed-card {
             flex-direction: column;
             align-items: flex-start;
             gap: 15px;
         }
+
         .feed-content {
             margin-right: 0;
             width: 100%;
         }
+
         .feed-status {
             width: 100%;
             justify-content: space-between;
             flex-wrap: wrap;
         }
-        .modal-dialog {
-            margin: 10px; /* Margem pequena para o modal não colar na borda da tela */
-        }
     }
 
-    /* Badges e Status */
     .category-badge {
         font-size: 0.6rem;
         font-weight: 900;
@@ -134,6 +201,8 @@
         background: rgba(0, 229, 255, 0.1);
         color: var(--cyan-neon);
         display: inline-block;
+        letter-spacing: 1px;
+        text-transform: uppercase;
     }
 
     .status-badge-cyber {
@@ -150,10 +219,25 @@
         white-space: nowrap;
     }
 
-    .status-kanban { color: var(--cyan-neon); border-color: var(--cyan-neon); }
-    .status-1 { color: var(--status-pending); border-color: var(--status-pending); }
-    .status-2 { color: var(--status-approved); border-color: var(--status-approved); }
-    .status-3 { color: var(--status-rejected); border-color: var(--status-rejected); }
+    .status-kanban {
+        color: var(--cyan-neon);
+        border-color: var(--cyan-neon);
+    }
+
+    .status-1 {
+        color: var(--status-pending);
+        border-color: var(--status-pending);
+    }
+
+    .status-2 {
+        color: var(--status-approved);
+        border-color: var(--status-approved);
+    }
+
+    .status-3 {
+        color: var(--status-rejected);
+        border-color: var(--status-rejected);
+    }
 
     .btn-justificativa {
         background: transparent;
@@ -167,32 +251,63 @@
         align-items: center;
         justify-content: center;
         transition: 0.3s;
+        cursor: pointer;
     }
 
-    /* Modais Ajustados */
+    /* ==========================================================================
+           ESTILIZAÇÃO PREMIUM DAS MODAIS CYBERPUNK
+           ========================================================================== */
+    .modal-backdrop {
+        backdrop-filter: blur(8px);
+        background-color: rgba(0, 0, 0, 0.7) !important;
+    }
+
     .modal-cyber {
         background: var(--card-bg) !important;
-        border: 1px solid #333 !important;
-        border-radius: 20px !important;
-    }
-    
-    .modal-body {
-        max-height: 70vh; /* Evita que o modal cresça demais no mobile */
-        overflow-y: auto;
+        border: 1px solid var(--border-color) !important;
+        border-radius: 24px !important;
+        box-shadow: 0 0 30px rgba(112, 0, 255, 0.15) !important;
     }
 
-    .label-detail {
-        color: var(--text-gray);
-        font-size: 0.75rem;
+    .modal-cyber-detalhes {
+        border-top: 4px solid var(--cyan-neon) !important;
+        box-shadow: 0 0 40px rgba(0, 229, 255, 0.15) !important;
+    }
+
+    .modal-cyber-justificativa {
+        border-top: 4px solid var(--status-rejected) !important;
+        box-shadow: 0 0 40px rgba(255, 70, 70, 0.15) !important;
+    }
+
+    .label-detail-cyber {
+        color: var(--cyan-neon);
+        font-size: 0.65rem;
+        font-weight: 800;
+        letter-spacing: 2px;
         text-transform: uppercase;
-        letter-spacing: 1px;
+        margin-bottom: 6px;
         display: block;
-        margin-bottom: 2px;
     }
 
-    #detalheDescricao, #textoJustificativa {
-        word-break: break-word; /* Força quebra de palavras longas nos modais */
-        line-height: 1.5;
+    .label-detail-rejected {
+        color: var(--status-rejected);
+    }
+
+    .cyber-display-box {
+        background: #050505;
+        border: 1px solid var(--border-color);
+        border-radius: 14px;
+        padding: 15px;
+    }
+
+    .text-purple-glow {
+        color: #fff;
+        text-shadow: 0 0 10px var(--purple-neon);
+    }
+
+    .text-cyan-glow {
+        color: var(--cyan-neon);
+        text-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
     }
 </style>
 
@@ -201,7 +316,7 @@
         <i class="bi bi-arrow-left"></i> Voltar
     </a>
 
-    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-end gap-3 mb-5">
+    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-end gap-3 mb-4">
         <div class="header-feeds">
             <h1>MINHAS <span class="text-purple-glow">PROPOSTAS</span></h1>
         </div>
@@ -210,10 +325,45 @@
         </a>
     </div>
 
-    <div class="feed-list">
+    <form method="GET" action="@Url.Action("ListarSolicitacoesUsuario", "Solicitacoes")" class="user-filter-box">
+        <div class="row g-2">
+            <div class="col-12 col-sm-4">
+                <input type="text" name="buscaTexto" class="form-control cyber-input" placeholder="Buscar texto..." value="@ViewBag.BuscaTexto" />
+            </div>
+            <div class="col-6 col-sm-3">
+                <select name="idSetor" class="form-select cyber-input">
+                    <option value="">-- Setor --</option>
+                    @foreach (var setor in (IEnumerable<InnovaCore.Domain.Entities.Setor>)ViewBag.Setores)
+                    {
+                        if (ViewBag.IdSetor == setor.Id)
+                        {
+                            <option value="@setor.Id" selected>@setor.Nome</option>
+                        }
+                        else
+                        {
+                            <option value="@setor.Id">@setor.Nome</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-6 col-sm-3">
+                <select name="idStatus" class="form-select cyber-input">
+                    <option value="">-- Status --</option>
+                    <option value="1" selected="@(ViewBag.IdStatus == 1)">Pendente</option>
+                    <option value="2" selected="@(ViewBag.IdStatus == 2)">Aprovada</option>
+                    <option value="3" selected="@(ViewBag.IdStatus == 3)">Inviabilizada</option>
+                </select>
+            </div>
+            <div class="col-12 col-sm-2">
+                <button type="submit" class="btn btn-cyber-submit w-100 h-100"><i class="bi bi-search"></i></button>
+            </div>
+        </div>
+    </form>
+
+    <div class="feed-list" id="user-feed-container">
         @foreach (var item in Model)
         {
-            <div class="feed-card" onclick="verDetalhes('@HttpUtility.JavaScriptStringEncode(item.Titulo)', '@HttpUtility.JavaScriptStringEncode(item.Descricao)', '@item.Setor?.Nome', '@item.SolicitacaoStatus?.NomeStatus')">
+            <div class="feed-card" onclick="verDetalhes('@HttpUtility.JavaScriptStringEncode(item.Titulo)', '@HttpUtility.JavaScriptStringEncode(item.Descricao)', '@item.Setor?.Nome', '@(item.Tarefa?.TarefaStatus?.Nome ?? item.SolicitacaoStatus?.NomeStatus)')">
                 <div class="feed-content">
                     <span class="category-badge">@item.Setor?.Nome</span>
                     <h3>@item.Titulo</h3>
@@ -229,7 +379,8 @@
                     }
                     else
                     {
-                        string icone = item.IdSolicitacaoStatus switch {
+                        string icone = item.IdSolicitacaoStatus switch
+                        {
                             2 => "bi-check-circle-fill",
                             3 => "bi-exclamation-octagon-fill",
                             _ => "bi-clock-history"
@@ -239,7 +390,7 @@
                             <i class="bi @icone"></i> @item.SolicitacaoStatus?.NomeStatus
                         </div>
 
-                        @if (item.IdSolicitacaoStatus == 3)
+                        if (item.IdSolicitacaoStatus == 3)
                         {
                             var justificativaJS = HttpUtility.JavaScriptStringEncode(item.JustificativaRejeicao ?? "Nenhuma justificativa fornecida.");
                             <button class="btn-justificativa" onclick="verJustificativa('@justificativaJS'); event.stopPropagation();">
@@ -251,67 +402,176 @@
             </div>
         }
     </div>
+
+    <div class="mt-4">
+        <!-- Aumentado de mt-2 para mt-4 para dar um espaçamento melhor do último card -->
+        <button type="button" id="btn-user-ver-mais" class="btn-load-more" onclick="carregarMaisSolicitacoesUsuario()">
+            <i class="bi bi-plus-lg"></i> REQUISITAR HISTÓRICO ADICIONAL
+        </button>
+    </div>
 </div>
 
+<!-- ==========================================================================
+     MODAL: DETALHES DA PROPOSTA (MELHORADA)
+     ========================================================================== -->
+<div class="modal fade" id="modalDetalhes" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content modal-cyber modal-cyber-detalhes">
+            <div class="modal-header border-0 pb-0 d-flex justify-content-between align-items-center" style="padding: 25px 30px 0 30px;">
+                <h5 class="modal-title font-weight-bold text-cyan-glow uppercase tracking-wider" style="font-size: 1.1rem; font-weight: 900; letter-spacing: 1px;">
+                    <i class="bi bi-terminal-fill me-2"></i> INFORMAÇÕES DO PROTOCOLO
+                </h5>
+                <button type="button" class="btn-action border-0" data-bs-dismiss="modal" style="background: transparent; color: #888; transition: 0.3s;"><i class="bi bi-x-lg fs-5"></i></button>
+            </div>
+            <div class="modal-body d-flex flex-column gap-4" style="padding: 25px 30px 30px 30px;">
+                <div>
+                    <span class="label-detail-cyber">Título do Registro</span>
+                    <div class="cyber-display-box">
+                        <h4 id="detalheTitulo" class="text-white fw-bold mb-0" style="font-size: 1.25rem;"></h4>
+                    </div>
+                </div>
+
+                <div class="row g-3">
+                    <!-- MUDADO DE TEMA PARA SETOR -->
+                    <div class="col-12 col-sm-6">
+                        <span class="label-detail-cyber">Setor Alocado</span>
+                        <div class="cyber-display-box d-flex align-items-center" style="min-height: 53px;">
+                            <span id="detalheTema" class="category-badge m-0 px-3 py-2 fs-7" style="border-radius: 8px;"></span>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6">
+                        <span class="label-detail-cyber">Status de Varredura</span>
+                        <div class="cyber-display-box d-flex align-items-center" style="min-height: 53px;">
+                            <span id="detalheStatus" class="fw-bold fs-6 text-white"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <span class="label-detail-cyber">Descrição do Escopo Técnico</span>
+                    <div class="cyber-display-box">
+                        <p id="detalheDescricao" class="text-white-50 small m-0" style="white-space: pre-wrap; line-height: 1.6; font-size: 0.95rem;"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==========================================================================
+     MODAL: MOTIVO DA REJEIÇÃO (MELHORADA)
+     ========================================================================== -->
 <div class="modal fade" id="modalJustificativa" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content modal-cyber shadow-lg">
-            <div class="modal-header border-0 pb-0">
-                <h5 class="modal-title font-weight-bold" style="color: var(--status-rejected);">
-                    <i class="bi bi-info-circle-fill me-2"></i> MOTIVO
+        <div class="modal-content modal-cyber modal-cyber-justificativa">
+            <div class="modal-header border-0 pb-0 d-flex justify-content-between align-items-center" style="padding: 25px 30px 0 30px;">
+                <h5 class="modal-title font-weight-bold" style="color: var(--status-rejected); font-weight: 900; letter-spacing: 1px;">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i> FLUXO INTERROMPIDO
                 </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                <button type="button" class="btn-action border-0" data-bs-dismiss="modal" style="background: transparent; color: #888;"><i class="bi bi-x-lg fs-5"></i></button>
             </div>
-            <div class="modal-body pt-3">
-                <p id="textoJustificativa" class="text-light m-0"></p>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="modalDetalhes" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content modal-cyber shadow-lg">
-            <div class="modal-header border-0">
-                <h5 class="modal-title font-weight-bold text-purple-glow">DETALHES</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body d-flex flex-column gap-3">
-                <div>
-                    <span class="label-detail">Título</span>
-                    <h4 id="detalheTitulo" class="text-white fw-bold mb-0"></h4>
-                </div>
-                <div class="row g-2">
-                    <div class="col-12 col-sm-6">
-                        <span class="label-detail">Tema</span>
-                        <span id="detalheTema" class="category-badge"></span>
-                    </div>
-                    <div class="col-12 col-sm-6">
-                        <span class="label-detail">Status Atual</span>
-                        <span id="detalheStatus" class="text-white small"></span>
-                    </div>
-                </div>
-                <hr class="border-secondary opacity-25">
-                <div>
-                    <span class="label-detail">Descrição Completa</span>
-                    <p id="detalheDescricao" class="text-white-50" style="white-space: pre-wrap;"></p>
+            <div class="modal-body" style="padding: 25px 30px 30px 30px;">
+                <span class="label-detail-cyber label-detail-rejected">Parecer de Inviabilidade</span>
+                <div class="cyber-display-box" style="border-color: rgba(255, 70, 70, 0.2);">
+                    <p id="textoJustificativa" class="text-light m-0 small" style="line-height: 1.6; font-size: 0.95rem;"></p>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
+    let userRegistrosCarregados = @Model.Count();
+    const userTamanhoPagina = 15;
+
+    const uFiltroTexto = "@ViewBag.BuscaTexto";
+    const uFiltroSetor = "@ViewBag.IdSetor";
+    const uFiltroStatus = "@ViewBag.IdStatus";
+
+    if (userRegistrosCarregados < userTamanhoPagina) {
+    document.getElementById('btn-user-ver-mais').style.display = 'none';
+    }
+
+    function carregarMaisSolicitacoesUsuario() {
+    const url = `@Url.Action("GetSolicitacoesUsuarioJson", "Solicitacoes")?buscaTexto=${encodeURIComponent(uFiltroTexto)}&idSetor=${uFiltroSetor}&idStatus=${uFiltroStatus}&skip=${userRegistrosCarregados}&take=${userTamanhoPagina}`;
+
+    fetch(url)
+    .then(response => response.json())
+    .then(dados => {
+    if (dados.length === 0) {
+    document.getElementById('btn-user-ver-mais').style.display = 'none';
+    return;
+    }
+
+    const container = document.getElementById('user-feed-container');
+
+    dados.forEach(item => {
+    const card = document.createElement('div');
+    card.className = "feed-card";
+
+    const tEscapado = item.titulo.replace(/'/g, "\\'");
+    const dEscapada = item.descricao ? item.descricao.replace(/'/g, "\\'") : "";
+    const sEscapado = item.setorNome.replace(/'/g, "\\'");
+    const stEscapado = item.statusNome.replace(/'/g, "\\'");
+
+    card.setAttribute('onclick', `verDetalhes('${tEscapado}', '${dEscapada}', '${sEscapado}', '${stEscapado}')`);
+
+    let statusHtml = "";
+    if (item.isTarefa) {
+    statusHtml = `
+    <div class="status-badge-cyber status-kanban">
+    <i class="bi bi-cpu-fill"></i> ${item.statusNome}
+    </div>`;
+    } else {
+    let icone = item.idSolicitacaoStatus === 2 ? "bi-check-circle-fill" :
+    item.idSolicitacaoStatus === 3 ? "bi-exclamation-octagon-fill" : "bi-clock-history";
+
+    statusHtml = `
+    <div class="status-badge-cyber status-${item.idSolicitacaoStatus}">
+    <i class="bi ${icone}"></i> ${item.statusNome}
+    </div>`;
+
+    if (item.idSolicitacaoStatus === 3) {
+    const justEscapada = item.justificativaRejeicao.replace(/'/g, "\\'");
+    statusHtml += `
+    <button class="btn-justificativa" onclick="verJustificativa('${justEscapada}'); event.stopPropagation();">
+    <i class="bi bi-question-lg"></i>
+    </button>`;
+    }
+    }
+
+    card.innerHTML = `
+    <div class="feed-content">
+    <span class="category-badge">${item.setorNome}</span>
+    <h3>${item.titulo}</h3>
+    <p>${item.descricao || ""}</p>
+    </div>
+    <div class="feed-status d-flex align-items-center gap-2" onclick="event.stopPropagation();">
+    ${statusHtml}
+    </div>
+    `;
+    container.appendChild(card);
+    });
+
+    userRegistrosCarregados += dados.length;
+
+    if (dados.length < userTamanhoPagina) {
+    document.getElementById('btn-user-ver-mais').style.display = 'none';
+    }
+    });
+    }
+
     function verJustificativa(mensagem) {
-        document.getElementById('textoJustificativa').innerText = mensagem;
-        new bootstrap.Modal(document.getElementById('modalJustificativa')).show();
+    document.getElementById('textoJustificativa').innerText = mensagem;
+    new bootstrap.Modal(document.getElementById('modalJustificativa')).show();
     }
 
     function verDetalhes(titulo, descricao, tema, status) {
-        document.getElementById('detalheTitulo').innerText = titulo;
-        document.getElementById('detalheDescricao').innerText = descricao;
-        document.getElementById('detalheTema').innerText = tema;
-        document.getElementById('detalheStatus').innerText = status;
-        new bootstrap.Modal(document.getElementById('modalDetalhes')).show();
+    document.getElementById('detalheTitulo').innerText = titulo;
+    document.getElementById('detalheDescricao').innerText = descricao || "Nenhum detalhe adicional indexado.";
+    document.getElementById('detalheTema').innerText = tema || "N/A";
+    document.getElementById('detalheStatus').innerText = status;
+    new bootstrap.Modal(document.getElementById('modalDetalhes')).show();
     }
 </script>

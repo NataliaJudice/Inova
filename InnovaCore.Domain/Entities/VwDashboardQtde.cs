@@ -13,5 +13,6 @@ namespace InnovaCore.Domain.Entities
         public int TarefasEmAndamento { get; set; }
         public int TarefasAComecar {  get; set; }
 
+        public int TarefasConcluidas { get; set; }
     }
 }

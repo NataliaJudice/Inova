@@ -3,7 +3,6 @@
 @{
     Layout = "_Layout";
 }
-
 <style>
     :root {
         --kanban-bg: #050505;
@@ -19,7 +18,6 @@
         font-family: 'Inter', sans-serif;
     }
 
-    /* HEADER E BOTÃO ADICIONAR */
     .header-container {
         display: flex;
         justify-content: space-between;
@@ -49,14 +47,13 @@
             background: #fff;
         }
 
-    /* TABELA */
     .table-container {
         padding: 40px;
         background: var(--col-bg);
-        border-radius: 50px; /* Aumentado de 25px para 50px */
+        border-radius: 50px;
         border: 1px solid var(--border-color);
         margin: 20px 40px;
-        overflow: hidden; /* Garante que o conteúdo respeite a borda arredondada */
+        overflow: hidden;
     }
 
     .custom-table {
@@ -75,34 +72,31 @@
             padding: 15px;
         }
 
-        /* TABELA - CARDS ARREDONDADOS */
         .custom-table tbody tr {
             background: var(--card-bg);
             transition: transform 0.2s;
         }
 
         .custom-table tbody td {
-            border: none !important; /* Remove a linha branca feia */
+            border: none !important;
             vertical-align: middle;
             padding: 15px;
         }
 
-            /* Arredonda o canto esquerdo da linha */
-            .custom-table tbody tr td:first-child {
-                border-top-left-radius: 10px;
-                border-bottom-left-radius: 10px;
-            }
+        .custom-table tbody tr td:first-child {
+            border-top-left-radius: 10px;
+            border-bottom-left-radius: 10px;
+        }
 
-            /* Arredonda o canto direito da linha */
-            .custom-table tbody tr td:last-child {
-                border-top-right-radius: 10px;
-                border-bottom-right-radius: 10px;
-            }
+        .custom-table tbody tr td:last-child {
+            border-top-right-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
 
-            .custom-table tbody tr:hover {
-                transform: scale(1.01); /* Um toque extra no zoom para destacar o arredondamento */
-                background: #1c2128;
-            }
+        .custom-table tbody tr:hover {
+            transform: scale(1.01);
+            background: #1c2128;
+        }
 
     .btn-neon-edit {
         background: transparent;
@@ -111,6 +105,7 @@
         border-radius: 8px;
         padding: 5px 15px;
         transition: 0.3s;
+        cursor: pointer;
     }
 
         .btn-neon-edit:hover {
@@ -119,7 +114,6 @@
             box-shadow: 0 0 10px var(--cyan-neon);
         }
 
-    /* MODAL */
     .modal-content {
         background-color: #0d1117;
         border: 1px solid var(--cyan-neon);
@@ -151,6 +145,12 @@
         letter-spacing: 2px;
         text-transform: uppercase;
     }
+
+    .swal-cyber-popup {
+        border: 1px solid var(--border-color) !important;
+        border-radius: 24px !important;
+        background: var(--col-bg) !important;
+    }
 </style>
 
 <div class="container-fluid">
@@ -171,7 +171,6 @@
                 <tr>
                     <th>ID</th>
                     <th>NOME DO SETOR</th>
-                    @* <th>EMAIL RESPONSÁVEL</th> *@
                     <th>STATUS</th>
                     <th class="text-end">AÇÕES</th>
                 </tr>
@@ -179,19 +178,17 @@
             <tbody>
                 @foreach (var setor in Model)
                 {
-                    <tr>
+                    <tr id="row-setor-@setor.Id">
                         <td style="color:var(--cyan-neon)">#@setor.Id</td>
-                        <td class="fw-bold">@setor.Nome</td>
-                        @* <td class="text-white-50">@setor.EmailResponsavel</td> *@
+                        <td class="fw-bold label-nome-setor">@setor.Nome</td>
                         <td>
                             <span class="badge @(setor.Status ? "bg-success" : "bg-danger")" style="border-radius: 20px; padding: 5px 12px;">
                                 @(setor.Status ? "Ativo" : "Inativo")
                             </span>
                         </td>
                         <td class="text-end">
-                            <button class="btn btn-neon-edit btn-sm"
-                                    onclick="abrirEdicao('@setor.Id', '@setor.Nome', '@setor.EmailResponsavel')">
-                                <i class="bi bi-pencil-square me-1"></i> EDITAR
+                            <button type="button" class="btn-neon-edit" onclick="abrirEdicao('@setor.Id', '@System.Web.HttpUtility.JavaScriptStringEncode(setor.Nome)', '@System.Web.HttpUtility.JavaScriptStringEncode(setor.EmailResponsavel ?? "exemplo@gmail.com")')">
+                                <i class="bi bi-pencil-square"></i> MODIFICAR
                             </button>
                         </td>
                     </tr>
@@ -219,8 +216,8 @@
                         <input type="text" name="Nome" id="editNome" class="form-control form-control-dark" required />
                     </div>
                     <div class="mb-3">
-                        <label class="detail-label d-block mb-2">EMAIL DO RESPONSÁVEL</label>
-                        <input type="email" name="EmailResponsavel" id="editEmail" class="form-control form-control-dark" required />
+                        <label class="detail-label d-block mb-2"></label>
+                        <input type="hidden" name="EmailResponsavel" id="editEmail" class="form-control form-control-dark" required />
                     </div>
                 </div>
                 <div class="modal-footer border-0">
@@ -233,52 +230,73 @@
 </div>
 
 @section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         const modalEdit = new bootstrap.Modal(document.getElementById('modalEditarSetor'));
         const form = document.getElementById('formEditarSetor');
 
         function abrirEdicao(id, nome, email) {
-            form.reset();
-            document.getElementById('editId').value = id;
-            document.getElementById('editNome').value = nome;
-            document.getElementById('editEmail').value = email;
-            document.getElementById('labelNomeSetor').innerText = nome;
-            modalEdit.show();
+        form.reset();
+        document.getElementById('editId').value = id;
+        document.getElementById('editNome').value = nome;
+        document.getElementById('editEmail').value = email;
+        document.getElementById('labelNomeSetor').innerText = nome;
+        modalEdit.show();
         }
 
         form.addEventListener('submit', async function (e) {
-            e.preventDefault();
+        e.preventDefault();
 
-            const btn = document.getElementById('btnSalvar');
-            btn.disabled = true;
-            btn.innerText = "PROCESSANDO...";
+        const btn = document.getElementById('btnSalvar');
+        btn.disabled = true;
+        btn.innerText = "SINCRO...";
 
-            const id = document.getElementById('editId').value;
-            const formData = new FormData(form);
+        const id = document.getElementById('editId').value;
+        const nomeAlterado = document.getElementById('editNome').value;
+        const emailAlterado = document.getElementById('editEmail').value;
+        const formData = new FormData(form);
 
-            try {
-                const response = await fetch(`/Setor/EditarSetor/${id}`, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        "RequestVerificationToken": document.querySelector('input[name="__RequestVerificationToken"]').value
-                    }
-                });
+        try {
+        const response = await fetch(`/Setor/EditarSetor/${id}`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+        "RequestVerificationToken": document.querySelector('input[name="__RequestVerificationToken"]').value
+        }
+        });
 
-                if (response.ok) {
-                    window.location.href = '@Url.Action("Index", "Setor")';
-                } else {
-                    const errorText = await response.text();
-                    console.error("Erro do Servidor:", errorText);
-                    alert("Erro na validação: " + errorText);
-                }
-            } catch (error) {
-                console.error("Erro na requisição:", error);
-                alert("Falha crítica ao conectar com o terminal.");
-            } finally {
-                btn.disabled = false;
-                btn.innerText = "SALVAR ALTERAÇÕES";
-            }
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+        modalEdit.hide();
+
+        // Notificação de sucesso instantânea
+        Swal.fire({
+        icon: 'success',
+        title: 'Matriz Atualizada',
+        text: data.message,
+        background: '#0d1117',
+        color: '#fff',
+        confirmButtonColor: '#00e5ff',
+        customClass: { popup: 'swal-cyber-popup' }
+        });
+
+        // Modifica os dados diretamente na linha da tabela por injeção DOM pura (Performance Instantânea)
+        const row = document.getElementById(`row-setor-${id}`);
+        if(row) {
+        row.querySelector('.label-nome-setor').innerText = nomeAlterado;
+        // Atualiza o onclick com o novo estado para futuras modificações sem quebrar o escopo
+        row.querySelector('.btn-neon-edit').setAttribute('onclick', `abrirEdicao('${id}', '${nomeAlterado}', '${emailAlterado}')`);
+        }
+        } else {
+        Swal.fire({ icon: 'error', title: 'Rejeitado', text: data.message || "Dados inválidos.", background: '#0d1117', color: '#fff' });
+        }
+        } catch (error) {
+        Swal.fire({ icon: 'error', title: 'Erro Estrutural', text: 'Sem contato com a central de segurança.', background: '#0d1117', color: '#fff' });
+        } finally {
+        btn.disabled = false;
+        btn.innerText = "SALVAR ALTERAÇÕES";
+        }
         });
     </script>
 }

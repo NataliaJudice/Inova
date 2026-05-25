@@ -22,6 +22,44 @@ namespace InnovaCore.Services.Services
             _setorServices = setorServices;
         }
 
+        public async Task<(IEnumerable<Tarefa> deTarefas, int totalReal)> GetFiltradasPaged(int statusId, string search, int? setorId, int skip, int take)
+        {
+            try
+            {
+                var query = _context.Tarefas
+                    .Include(s => s.Solicitacao)
+                        .ThenInclude(s => s.Setor)
+                    .Where(s => s.Status && s.IdTarefaStatus == statusId);
+
+                if (!string.IsNullOrEmpty(search))
+                {
+                    string searchLower = search.ToLower();
+                    query = query.Where(t => t.Solicitacao.Titulo.ToLower().Contains(searchLower) ||
+                                             (t.Solicitacao.Descricao != null && t.Solicitacao.Descricao.ToLower().Contains(searchLower)));
+                }
+
+                if (setorId.HasValue && setorId.Value > 0)
+                {
+                    query = query.Where(t => t.Solicitacao.IdSetor == setorId.Value);
+                }
+
+                int totalReal = await query.CountAsync();
+
+                var tarefas = await query
+                    .AsNoTracking()
+                    .OrderByDescending(t => t.Datacadastro)
+                    .Skip(skip)
+                    .Take(take)
+                    .ToListAsync();
+
+                return (tarefas, totalReal);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro ao buscar tarefas filtradas de forma paginada: " + ex.Message);
+            }
+        }
+
         public async Task AtribuirResponsavel(int idTarefa, string nomeResponsavel)
         {
             try
@@ -66,16 +104,15 @@ namespace InnovaCore.Services.Services
         {
             try
             {
-                var solicitacao = await _context.Solicitacoes
-                    .Include(x => x.Usuario)
-                    .Include(x => x.Tarefa)
-                    .FirstOrDefaultAsync(t => t.Tarefa.Id == idTarefa);
+                var tarefa = await _context.Tarefas
+                    .Include(t => t.Solicitacao)
+                        .ThenInclude(s => s.Usuario)
+                    .FirstOrDefaultAsync(t => t.Id == idTarefa);
 
-                if (solicitacao == null || solicitacao.Tarefa == null)
+                if (tarefa == null || tarefa.Solicitacao == null)
                     throw new KeyNotFoundException("Tarefa ou Solicitação vinculada não encontrada.");
 
-
-                solicitacao.Tarefa.IdTarefaStatus = novoStatus;
+                tarefa.IdTarefaStatus = novoStatus;
 
                 var statusInfo = await _context.TarefaStatus
                     .AsNoTracking()
@@ -85,19 +122,17 @@ namespace InnovaCore.Services.Services
 
                 await _context.SaveChangesAsync();
 
-                if (solicitacao.Usuario != null && !string.IsNullOrEmpty(solicitacao.Usuario.Email))
-                {
-                    await _emailServices.SendStatusUpdateEmailAsync(solicitacao.Usuario.Email, solicitacao.Titulo, nomeStatus);
-                }
+                if (tarefa.Solicitacao.Usuario != null && !string.IsNullOrEmpty(tarefa.Solicitacao.Usuario.Email))
+                    await _emailServices.SendStatusUpdateEmailAsync(tarefa.Solicitacao.Usuario.Email, tarefa.Solicitacao.Titulo, nomeStatus);
+                
 
-                await _setorServices.EnviarEmailSetor(solicitacao.IdSetor, solicitacao.Titulo, solicitacao.Descricao, nomeStatus);
+                await _setorServices.EnviarEmailSetor(tarefa.Solicitacao.IdSetor, tarefa.Solicitacao.Titulo, tarefa.Solicitacao.Descricao, nomeStatus);
             }
             catch (Exception ex)
             {
                 throw new Exception("Falha ao mudar status da tarefa: " + ex.Message);
             }
         }
-
         public async Task<IEnumerable<Tarefa>> GetAll()
         {
             try
@@ -105,6 +140,8 @@ namespace InnovaCore.Services.Services
                 return await _context.Tarefas
                     .AsNoTracking()
                     .Include(s => s.Solicitacao)
+                        .ThenInclude(s => s.Setor)
+                    .Where(s => s.Status)    
                     .ToListAsync();
             }
             catch (Exception ex)

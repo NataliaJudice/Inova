@@ -19,9 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\InnovaCore.Data\InnovaCore.Data.csproj" />
-    <ProjectReference Include="..\InnovaCore.Domain\InnovaCore.Domain.csproj" />
-    <ProjectReference Include="..\InnovaCore.Services\InnovaCore.Services.csproj" />
+    <ProjectReference Include="..\InnovaCore.Infra.Ioc\InnovaCore.Infra.Ioc.csproj" />
   </ItemGroup>
 
 </Project>

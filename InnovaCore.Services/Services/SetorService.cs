@@ -73,7 +73,6 @@ namespace InnovaCore.Services.Services
             try
             {
                 setor.Nome = setorNovo.Nome;
-                setor.EmailResponsavel = setorNovo.EmailResponsavel;
 
                 _context.Setor.Update(setor);
                 await _context.SaveChangesAsync();
@@ -98,7 +97,7 @@ namespace InnovaCore.Services.Services
                 {
                     throw new Exception("Não foi possível enviar o e-mail: Setor não encontrado.");
                 }
-
+                //Pode mudar o email aqui se precisar
                 string emailDestino = "natyang873@gmail.com";
 
                 await _emailService.SendStatusUpdateEmailAsyncSetores(emailDestino, taskTitle, descricaoTarefa, status);

@@ -28,38 +28,62 @@ namespace InnovaCore.Controllers
             return View();
         }
 
+        [HttpPost]
+        public async Task<IActionResult> CriarSetor([FromBody] Setor setor)
+        {
+            if (setor == null)
+                return Json(new { success = false, message = "Os dados enviados estão corrompidos." });
+
+            ModelState.Remove("DataCadastro");
+            ModelState.Remove("Tarefas");
+            ModelState.Remove("Solicitacoes");
+
+            if (!ModelState.IsValid)
+            {
+                var erros = string.Join(" ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
+                return Json(new { success = false, message = $"Dados inválidos: {erros}" });
+            }
+
+            try
+            {
+                setor.Status = true; 
+                await _setorService.CriarSetor(setor);
+
+                return Json(new
+                {
+                    success = true,
+                    message = "Novo terminal de setor inicializado!",
+                    redirectUrl = Url.Action("Index")
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Falha interna na criação: " + ex.Message });
+            }
+        }
 
         [HttpPost]
-        public async Task<IActionResult> CriarSetor(Setor setor)
+        public async Task<IActionResult> EditarSetor(int id, [FromForm] Setor setor)
         {
             ModelState.Remove("DataCadastro");
-            ModelState.Remove("Tarefas"); // Se existir uma lista de tarefas na Entidade
-            ModelState.Remove("Solicitacoes"); // Se houver relacionamento
+            ModelState.Remove("Tarefas");
+            ModelState.Remove("Solicitacoes");
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                await _setorService.CriarSetor(setor);
-                return RedirectToAction("Index");
+                var erros = string.Join(" ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
+                return Json(new { success = false, message = $"Erro de validação: {erros}" });
             }
 
-        
-            return View(setor);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> EditarSetor(int id, Setor setor)
-        {
-            if (ModelState.IsValid)
+            try
             {
                 await _setorService.EditarSetor(id, setor);
-                return RedirectToAction("Index"); // Isso retorna um Status 200 para o Fetch
+                return Json(new { success = true, message = "Configurações do terminal atualizadas com sucesso!" });
             }
-
-            // Se chegar aqui, a validação falhou
-            return BadRequest("Dados inválidos");
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Falha ao editar setor: " + ex.Message });
+            }
         }
-
-
-
     }
 }

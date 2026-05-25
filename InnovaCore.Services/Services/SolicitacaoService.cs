@@ -30,12 +30,11 @@ namespace InnovaCore.Services.Services
             {
                 solicitacao.Datacadastro = DateTime.Now;
                 solicitacao.Status = true;
-                solicitacao.IdSolicitacaoStatus = 1; 
+                solicitacao.IdSolicitacaoStatus = 1;
                 solicitacao.IdUsuario = userId;
 
                 _context.Solicitacoes.Add(solicitacao);
                 await _context.SaveChangesAsync();
-
 
                 await EnviarEmails(solicitacao.IdSetor, email, solicitacao.Titulo, solicitacao.Descricao, "Enviada");
             }
@@ -45,20 +44,29 @@ namespace InnovaCore.Services.Services
             }
         }
 
+        public async Task<IEnumerable<Solicitacao>> ListarPendentesPaginado(string? buscaTexto, int? idSetor, int? idStatus, int skip, int take)
+        {
+            var query = _context.Solicitacoes
+                .Include(x => x.Setor).Where(x => x.IdSolicitacaoStatus == 1).AsQueryable();
+
+            if (!string.IsNullOrEmpty(buscaTexto))
+                query = query.Where(s => s.Titulo.Contains(buscaTexto) || s.Descricao.Contains(buscaTexto));
+
+            if (idSetor.HasValue)
+                query = query.Where(s => s.IdSetor == idSetor.Value);
+
+            if (idStatus.HasValue)
+                query = query.Where(s => s.IdSolicitacaoStatus == idStatus.Value); 
+
+            return await query
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync();
+        }
+      
         public async Task<IEnumerable<Solicitacao>> ListarPendentes()
         {
-            try
-            {
-                return await _context.Solicitacoes
-                    .AsNoTracking()
-                    .Include(s => s.Setor)
-                    .Where(s => s.IdSolicitacaoStatus == 1)
-                    .ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Erro ao listar solicitações pendentes.");
-            }
+            return await ListarPendentesPaginado(null, null, 0, 15,0);
         }
 
         public async Task AprovarSolicitacao(int id)
@@ -72,14 +80,14 @@ namespace InnovaCore.Services.Services
                 if (solicitacao == null)
                     throw new KeyNotFoundException("Solicitação não encontrada.");
 
-                solicitacao.IdSolicitacaoStatus = 2; 
+                solicitacao.IdSolicitacaoStatus = 2;
 
                 Tarefa novatarefa = new Tarefa()
                 {
                     Datacadastro = DateTime.Now,
                     DataPrevisaoEntrega = DateTime.MinValue,
                     IdSolicitacao = id,
-                    IdTarefaStatus = 7, 
+                    IdTarefaStatus = 1,
                     Status = true
                 };
 
@@ -105,7 +113,7 @@ namespace InnovaCore.Services.Services
                 if (solicitacao == null)
                     throw new KeyNotFoundException("Solicitação não encontrada.");
 
-                solicitacao.IdSolicitacaoStatus = 3; 
+                solicitacao.IdSolicitacaoStatus = 3;
                 solicitacao.JustificativaRejeicao = justificativa;
 
                 _context.Solicitacoes.Update(solicitacao);
@@ -115,44 +123,61 @@ namespace InnovaCore.Services.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("Erro ao rejeitar solicitação: " + ex.Message);
+                throw new Exception("Erro aoBox rejeitar solicitação: " + ex.Message);
+            }
+        }
+
+        public async Task<IEnumerable<Solicitacao>> ListarSolicitacoesUsuarioPaginado(string idUser, string? buscaTexto, int? idSetor, int? idStatus, int skip, int take)
+        {
+            if (string.IsNullOrEmpty(idUser)) 
+                return Enumerable.Empty<Solicitacao>();
+
+            try
+            {
+                var query = _context.Solicitacoes
+                    .Include(s => s.SolicitacaoStatus)
+                    .Include(s => s.Setor)
+                    .Include(s => s.Tarefa)
+                        .ThenInclude(t => t.TarefaStatus)
+                    .Where(s => s.IdUsuario == idUser);
+
+                if (!string.IsNullOrEmpty(buscaTexto))
+                    query = query.Where(s => s.Titulo.Contains(buscaTexto) || s.Descricao.Contains(buscaTexto));
+                
+                if (idSetor.HasValue && idSetor.Value > 0)
+                    query = query.Where(s => s.IdSetor == idSetor.Value); 
+
+                if (idStatus.HasValue && idStatus.Value > 0)
+                    query = query.Where(s => s.IdSolicitacaoStatus == idStatus.Value);
+
+                return await query
+                    .AsNoTracking()
+                    .OrderByDescending(s => s.Datacadastro)
+                    .Skip(skip)
+                    .Take(take)
+                    .ToListAsync();
+            }
+            catch (Exception)
+            {
+                throw new Exception("Erro ao buscar histórico filtrado do usuário.");
             }
         }
 
         public async Task<IEnumerable<Solicitacao>> ListarSolicitacosUsuario(string idUser)
         {
-            if (string.IsNullOrEmpty(idUser)) return Enumerable.Empty<Solicitacao>();
-
-            try
-            {
-                return await _context.Solicitacoes
-                    .AsNoTracking()
-                    .Include(s => s.SolicitacaoStatus)
-                    .Include(s => s.Setor)
-                    .Include(s => s.Tarefa)
-                        .ThenInclude(t => t.TarefaStatus)
-                    .Where(s => s.IdUsuario == idUser)
-                    .OrderByDescending(s => s.Datacadastro)
-                    .ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Erro ao buscar solicitações do usuário.");
-            }
+            return await ListarSolicitacoesUsuarioPaginado(idUser, null, null, null, 0, 15);
         }
 
         public async Task EnviarEmails(int? id, string userEmail, string tituloTarefa, string descricaoTarefa, string status)
         {
-            try 
-    {
-        // Tenta enviar os e-mails
-        await _emailServices.SendStatusUpdateEmailAsync(userEmail, tituloTarefa, status);
-        await _setorServices.EnviarEmailSetor(id, tituloTarefa, descricaoTarefa, status);
-    }
-    catch (Exception)
-    {
-        
-    }
+            try
+            {
+                await _emailServices.SendStatusUpdateEmailAsync(userEmail, tituloTarefa, status);
+                await _setorServices.EnviarEmailSetor(id, tituloTarefa, descricaoTarefa, status);
+            }
+            catch (Exception ex) {
+                throw new Exception("Falha no serviço de e-mail: " + ex.Message);
+            }
         }
     }
 }

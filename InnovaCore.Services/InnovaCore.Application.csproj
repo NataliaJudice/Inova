@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\InnovaCore.Data\InnovaCore.Data.csproj" />
+    <ProjectReference Include="..\InnovaCore.Data\InnovaCore.Infra.Data.csproj" />
     <ProjectReference Include="..\InnovaCore.Domain\InnovaCore.Domain.csproj" />
   </ItemGroup>
 

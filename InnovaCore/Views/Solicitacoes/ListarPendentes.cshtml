@@ -1,11 +1,11 @@
-﻿@model IEnumerable<InnovaCore.Domain.Entities.Solicitacao>
+﻿@using System.Web
+@model IEnumerable<InnovaCore.Domain.Entities.Solicitacao>
 
 @{
-    Layout = "_Layout"; 
+    Layout = "_Layout";
 }
 
 <style>
-    /* 1. RESET E AJUSTES DE FLUXO */
     main.container {
         max-width: 100% !important;
         padding: 0 !important;
@@ -48,13 +48,49 @@
         margin-bottom: 5px;
     }
 
-    /* 2. TABELA */
+    /* BARRA DE FILTROS AVANÇADOS */
+    .filter-panel-cyber {
+        background: rgba(13, 17, 23, 0.6);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 15px 25px;
+        margin-top: 20px;
+        backdrop-filter: blur(5px);
+    }
+
+    .cyber-input {
+        background: #030508 !important;
+        border: 1px solid var(--border-color) !important;
+        color: #fff !important;
+        border-radius: 10px !important;
+        font-size: 0.9rem;
+    }
+
+        .cyber-input:focus {
+            border-color: var(--cyan-neon) !important;
+            box-shadow: 0 0 8px rgba(0, 229, 255, 0.2) !important;
+        }
+
+    .btn-cyber-search {
+        background: var(--cyan-neon);
+        color: #000;
+        font-weight: 800;
+        border-radius: 10px;
+        border: none;
+        transition: 0.3s;
+    }
+
+        .btn-cyber-search:hover {
+            background: #00bacc;
+            box-shadow: 0 0 12px rgba(0, 229, 255, 0.4);
+        }
+
     .protocol-table-container {
         background: var(--card-bg);
         border-radius: 24px;
         border: 1px solid var(--border-color);
         padding: 20px;
-        margin-top: 30px;
+        margin-top: 20px;
         overflow-x: auto;
     }
 
@@ -65,10 +101,21 @@
         table-layout: fixed;
     }
 
-    .col-identificador { width: 50%; }
-    .col-status { width: 15%; }
-    .col-data { width: 15%; }
-    .col-acoes { width: 20%; }
+    .col-identificador {
+        width: 50%;
+    }
+
+    .col-status {
+        width: 15%;
+    }
+
+    .col-data {
+        width: 15%;
+    }
+
+    .col-acoes {
+        width: 20%;
+    }
 
     .cyber-table th {
         color: var(--cyan-neon);
@@ -84,19 +131,26 @@
         transition: 0.3s;
     }
 
-    .protocol-row:hover {
-        background: #1c2128;
-    }
+        .protocol-row:hover {
+            background: #1c2128;
+        }
 
-    .protocol-row td {
-        padding: 20px;
-        border-top: 1px solid var(--border-color);
-        border-bottom: 1px solid var(--border-color);
-        vertical-align: middle;
-    }
+        .protocol-row td {
+            padding: 20px;
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
 
-    .protocol-row td:first-child { border-left: 1px solid var(--border-color); border-radius: 15px 0 0 15px; }
-    .protocol-row td:last-child { border-right: 1px solid var(--border-color); border-radius: 0 15px 15px 0; }
+            .protocol-row td:first-child {
+                border-left: 1px solid var(--border-color);
+                border-radius: 15px 0 0 15px;
+            }
+
+            .protocol-row td:last-child {
+                border-right: 1px solid var(--border-color);
+                border-radius: 0 15px 15px 0;
+            }
 
     .text-truncate-cyber {
         font-weight: 700;
@@ -137,14 +191,23 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        cursor: pointer;
     }
 
-    .btn-approve:hover { background: var(--cyan-neon); color: #000; border-color: var(--cyan-neon); }
-    .btn-reject:hover { background: var(--red-neon); color: #fff; border-color: var(--red-neon); }
+    .btn-approve:hover {
+        background: var(--cyan-neon);
+        color: #000;
+        border-color: var(--cyan-neon);
+    }
 
-    /* 3. CORREÇÃO DO MODAL (ESTILOS QUE FALTAVAM) */
+    .btn-reject:hover {
+        background: var(--red-neon);
+        color: #fff;
+        border-color: var(--red-neon);
+    }
+
     .modal-overlay {
-        display: none; /* Controlado pelo JS */
+        display: none;
         position: fixed;
         top: 0;
         left: 0;
@@ -160,7 +223,7 @@
     .modal-content-cyber {
         background: var(--card-bg);
         border: 1px solid var(--border-color);
-        border-top: 4px solid var(--red-neon); /* Detalhe visual de erro */
+        border-top: 4px solid var(--red-neon);
         padding: 30px;
         border-radius: 20px;
         width: 90%;
@@ -170,17 +233,78 @@
     }
 
     @@keyframes modalScaleIn {
-        from { transform: scale(0.9); opacity: 0; }
-        to { transform: scale(1); opacity: 1; }
+        from {
+            transform: scale(0.9);
+            opacity: 0;
+        }
+
+        to {
+            transform: scale(1);
+            opacity: 1;
+        }
     }
+
+    .swal-cyber-popup {
+        border: 1px solid var(--border-color) !important;
+        border-radius: 24px !important;
+        background: var(--card-bg) !important;
+    }
+
+    .btn-load-more {
+        background: rgba(255,255,255,0.02);
+        color: #9ca3af;
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 12px;
+        width: 100%;
+        font-weight: 700;
+        font-size: 0.85rem;
+        letter-spacing: 1px;
+        transition: 0.3s;
+    }
+
+        .btn-load-more:hover {
+            background: rgba(0, 229, 255, 0.05);
+            color: var(--cyan-neon);
+            border-color: var(--cyan-neon);
+        }
 </style>
+
+@Html.AntiForgeryToken()
 
 <div class="page-wrapper">
     <div class="main-content">
         <div class="header-title">
             <h1>PROPOSTAS PENDENTES</h1>
-            <p class="text-secondary">Gerenciamento de propostas pendentes.</p>
+            <p class="text-secondary">Gerenciamento de propostas pendentes em tempo real.</p>
         </div>
+
+        <form method="GET" action="@Url.Action("ListarPendentes", "Solicitacoes")" class="filter-panel-cyber">
+            <div class="row g-3 align-items-center">
+                <div class="col-12 col-md-5">
+                    <input type="text" name="buscaTexto" class="form-control cyber-input" placeholder="Pesquisar por título ou descrição..." value="@ViewBag.BuscaTexto" autocomplete="off" />
+                </div>
+                <div class="col-12 col-md-4">
+                    <select name="idSetor" class="form-select cyber-input">
+                        <option value="">-- Todos os Setores --</option>
+                        @foreach (var setor in (IEnumerable<InnovaCore.Domain.Entities.Setor>)ViewBag.Setores)
+                        {
+                            if (ViewBag.IdSetor == setor.Id)
+                            {
+                                <option value="@setor.Id" selected>@setor.Nome</option>
+                            }
+                            else
+                            {
+                                <option value="@setor.Id">@setor.Nome</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-12 col-md-3">
+                    <button type="submit" class="btn btn-cyber-search w-100 py-2"><i class="bi bi-funnel"></i> FILTRAR MATRIZ</button>
+                </div>
+            </div>
+        </form>
 
         <div class="protocol-table-container">
             <table class="cyber-table">
@@ -192,10 +316,10 @@
                         <th class="col-acoes" style="text-align: right;">Ações</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="table-body-pendentes">
                     @foreach (var item in Model)
                     {
-                        <tr class="protocol-row">
+                        <tr class="protocol-row" id="row-@item.Id">
                             <td>
                                 <span class="text-truncate-cyber" title="@item.Titulo">
                                     @item.Titulo
@@ -205,18 +329,16 @@
                                 <span class="badge-status">Pendente</span>
                             </td>
                             <td style="font-size: 0.8rem; color: #555;">
-                                @item.Datacadastro
+                                @item.Datacadastro?.ToString("dd/MM/yyyy HH:mm")
                             </td>
                             <td class="actions-cell">
-                                <button type="button" class="btn-action btn-approve" onclick="abrirModalDetalhes('@item.Titulo', '@item.Descricao', '@(item.Setor?.Nome ?? "N/A")')"  title="Visualizar Detalhes">
-                                 <i class="bi bi-eye"></i>
-                                 </button>
-                                <form asp-action="Aprovar" method="post" style="margin:0;">
-                                    <input type="hidden" name="id" value="@item.Id" />
-                                    <button type="submit" class="btn-action btn-approve" title="Aprovar">
-                                        <i class="bi bi-check-lg"></i>
-                                    </button>
-                                </form>
+                                <button type="button" class="btn-action" onclick="abrirModalDetalhes('@HttpUtility.JavaScriptStringEncode(item.Titulo)', '@HttpUtility.JavaScriptStringEncode(item.Descricao)', '@(item.Setor?.Nome ?? "N/A")')" title="Visualizar Detalhes">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+
+                                <button type="button" class="btn-action btn-approve" onclick="processarAprovacao(@item.Id)" title="Aprovar">
+                                    <i class="bi bi-check-lg"></i>
+                                </button>
 
                                 <button type="button" class="btn-action btn-reject" onclick="abrirModal('@item.Id')" title="Rejeitar">
                                     <i class="bi bi-x-lg"></i>
@@ -226,6 +348,12 @@
                     }
                 </tbody>
             </table>
+
+            <div class="mt-3">
+                <button type="button" id="btn-ver-mais" class="btn-load-more" onclick="carregarMaisPendentes()">
+                    <i class="bi bi-arrow-down-short"></i> CARREGAR MAIS REGISTROS PROTOCOLARES
+                </button>
+            </div>
         </div>
     </div>
 </div>
@@ -236,27 +364,22 @@
             <h3 class="fw-bold m-0" style="color: var(--cyan-neon); letter-spacing: 1px;">DETALHES DA PROPOSTA</h3>
             <button onclick="fecharModalDetalhes()" class="btn-action"><i class="bi bi-x-lg"></i></button>
         </div>
-        
         <div class="mb-4">
             <label class="small text-secondary text-uppercase fw-bold">Título</label>
             <p id="detalheTitulo" class="fw-bold fs-5"></p>
         </div>
-
         <div class="row mb-4">
             <div class="col-6">
                 <label class="small text-secondary text-uppercase fw-bold">Setor</label>
                 <p id="detalheSetor" class="text-white-50"></p>
             </div>
-            
         </div>
-
         <div class="mb-4">
             <label class="small text-secondary text-uppercase fw-bold">Descrição Completa</label>
             <div class="p-3 bg-black border border-secondary rounded-3" style="min-height: 100px;">
                 <p id="detalheDescricao" class="small m-0 text-white-50" style="white-space: pre-wrap;"></p>
             </div>
         </div>
-
         <div class="d-flex gap-2 mt-4">
             <button onclick="fecharModalDetalhes()" class="btn btn-outline-secondary w-100 rounded-pill py-2">FECHAR</button>
         </div>
@@ -267,10 +390,10 @@
     <div class="modal-content-cyber">
         <h3 class="fw-bold mb-3" style="color: var(--red-neon); letter-spacing: 1px;">INTERROMPER FLUXO</h3>
         <p class="small text-secondary mb-4">Aponte a inconsistência técnica para finalizar o protocolo.</p>
-        
-        <form asp-action="Rejeitar" method="post">
+
+        <form id="formRejeitar" onsubmit="processarRejeicao(event)">
             <input type="hidden" id="inputModalId" name="IdSolicitacao" />
-            <textarea name="Justificativa" rows="4" 
+            <textarea id="justificativaTexto" name="Justificativa" rows="4"
                       class="form-control bg-black border-secondary text-white mb-4"
                       style="border-radius: 12px; resize: none;"
                       placeholder="Descreva o motivo..." required></textarea>
@@ -283,41 +406,203 @@
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
+    const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+    let registrosCarregados = @Model.Count();
+    const tamanhoPagina = 15;
+
+    // Configurações capturadas dos filtros atuais para a query AJAX
+    const filtroTexto = "@ViewBag.BuscaTexto";
+    const filtroSetor = "@ViewBag.IdSetor";
+
+    if(registrosCarregados < tamanhoPagina) {
+    document.getElementById('btn-ver-mais').style.display = 'none';
+    }
+
+    function carregarMaisPendentes() {
+    const url = `@Url.Action("GetPendentesJson", "Solicitacoes")?buscaTexto=${encodeURIComponent(filtroTexto)}&idSetor=${filtroSetor}&skip=${registrosCarregados}&take=${tamanhoPagina}`;
+
+    fetch(url)
+    .then(response => response.json())
+    .then(dados => {
+    if(dados.length === 0) {
+    document.getElementById('btn-ver-mais').style.display = 'none';
+    return;
+    }
+
+    const tbody = document.getElementById('table-body-pendentes');
+
+    dados.forEach(item => {
+    const tr = document.createElement('tr');
+    tr.className = "protocol-row";
+    tr.id = `row-${item.id}`;
+
+    // Escapa strings para injeção segura de atributos inline
+    const tituloEscapado = item.titulo.replace(/'/g, "\\'");
+    const descEscapada = item.descricao ? item.descricao.replace(/'/g, "\\'") : "";
+    const setorEscapado = item.setorNome.replace(/'/g, "\\'");
+
+    tr.innerHTML = `
+    <td>
+    <span class="text-truncate-cyber" title="${item.titulo}">
+    ${item.titulo}
+    </span>
+    </td>
+    <td>
+    <span class="badge-status">Pendente</span>
+    </td>
+    <td style="font-size: 0.8rem; color: #555;">
+    ${item.datacadastro}
+    </td>
+    <td class="actions-cell">
+    <button type="button" class="btn-action" onclick="abrirModalDetalhes('${tituloEscapado}', '${descEscapada}', '${setorEscapado}')" title="Visualizar Detalhes">
+    <i class="bi bi-eye"></i>
+    </button>
+    <button type="button" class="btn-action btn-approve" onclick="processarAprovacao(${item.id})" title="Aprovar">
+    <i class="bi bi-check-lg"></i>
+    </button>
+    <button type="button" class="btn-action btn-reject" onclick="abrirModal(${item.id})" title="Rejeitar">
+    <i class="bi bi-x-lg"></i>
+    </button>
+    </td>
+    `;
+    tbody.appendChild(tr);
+    });
+
+    registrosCarregados += dados.length;
+
+    if(dados.length < tamanhoPagina) {
+    document.getElementById('btn-ver-mais').style.display = 'none';
+    }
+    });
+    }
+
     function abrirModal(id) {
-        document.getElementById('inputModalId').value = id;
-        document.getElementById('modalRejeicao').style.display = 'flex';
-        // Impede scroll do body com modal aberto
-        document.body.style.overflow = 'hidden';
+    document.getElementById('inputModalId').value = id;
+    document.getElementById('justificativaTexto').value = '';
+    document.getElementById('modalRejeicao').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
     }
 
     function fecharModal() {
-        document.getElementById('modalRejeicao').style.display = 'none';
-        // Devolve o scroll ao fechar
-        document.body.style.overflow = 'auto';
+    document.getElementById('modalRejeicao').style.display = 'none';
+    document.body.style.overflow = 'auto';
     }
 
-    function abrirModalDetalhes(titulo, descricao, setor, tema) {
+    function abrirModalDetalhes(titulo, descricao, setor) {
     document.getElementById('detalheTitulo').innerText = titulo;
-    document.getElementById('detalheDescricao').innerText = descricao;
+    document.getElementById('detalheDescricao').innerText = descricao || "Nenhuma descrição informada.";
     document.getElementById('detalheSetor').innerText = setor;
-   
-    
     document.getElementById('modalDetalhes').style.display = 'flex';
     document.body.style.overflow = 'hidden';
-}
+    }
 
-function fecharModalDetalhes() {
+    function fecharModalDetalhes() {
     document.getElementById('modalDetalhes').style.display = 'none';
-
     document.body.style.overflow = 'auto';
-}
+    }
 
-    // Fechar ao clicar fora da caixa branca
+    function processarAprovacao(id) {
+    Swal.fire({
+    title: 'Confirmar Aprovação?',
+    text: "Esta solicitação será promovida a Tarefa no sistema.",
+    icon: 'question',
+    showCancelButton: true,
+    background: '#0d1117',
+    color: '#fff',
+    confirmButtonColor: '#00e5ff',
+    cancelButtonColor: '#30363d',
+    confirmButtonText: 'Sim, aprovar!',
+    cancelButtonText: 'Voltar',
+    customClass: { popup: 'swal-cyber-popup' }
+    }).then((result) => {
+    if (result.isConfirmed) {
+    Swal.fire({
+    title: 'Processando Aprovação...',
+    html: 'Gerando nova tarefa e disparando notificações.',
+    allowOutsideClick: false,
+    didOpen: () => { Swal.showLoading(); },
+    background: '#0d1117',
+    color: '#fff',
+    customClass: { popup: 'swal-cyber-popup' }
+    });
+
+    let formData = new FormData();
+    formData.append("id", id);
+
+    fetch('@Url.Action("Aprovar", "Solicitacoes")', {
+    method: 'POST',
+    headers: { 'RequestVerificationToken': token },
+    body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+    if(data.success) {
+    Swal.fire({
+    icon: 'success',
+    title: 'Protocolo Aprovado',
+    text: data.message,
+    background: '#0d1117',
+    color: '#fff',
+    confirmButtonColor: '#00e5ff',
+    customClass: { popup: 'swal-cyber-popup' }
+    }).then(() => {
+    window.location.href = data.redirectUrl;
+    });
+    } else {
+    Swal.fire({ icon: 'error', title: 'Falha', text: data.message, background: '#0d1117', color: '#fff' });
+    }
+    });
+    }
+    });
+    }
+
+    function processarRejeicao(e) {
+    e.preventDefault();
+    const id = document.getElementById('inputModalId').value;
+    const justificativa = document.getElementById('justificativaTexto').value;
+
+    fecharModal();
+
+    Swal.fire({
+    title: 'Interrompendo Fluxo...',
+    html: 'Salvando parecer técnico e notificando usuário.',
+    allowOutsideClick: false,
+    didOpen: () => { Swal.showLoading(); },
+    background: '#0d1117',
+    color: '#fff',
+    customClass: { popup: 'swal-cyber-popup' }
+    });
+
+    fetch('@Url.Action("Rejeitar", "Solicitacoes")', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': token },
+    body: JSON.stringify({ IdSolicitacao: parseInt(id), Justificativa: justificativa })
+    })
+    .then(response => response.json())
+    .then(data => {
+    if (data.success) {
+    Swal.fire({
+    icon: 'success',
+    title: 'Fluxo Interrompido',
+    text: data.message,
+    background: '#0d1117',
+    color: '#fff',
+    confirmButtonColor: '#ff3d3d',
+    customClass: { popup: 'swal-cyber-popup' }
+    }).then(() => {
+    document.getElementById(`row-${id}`).remove();
+    });
+    } else {
+    Swal.fire({ icon: 'error', title: 'Erro', text: data.message, background: '#0d1117', color: '#fff' });
+    }
+    });
+    }
+
     window.onclick = function(event) {
-        var modalRejeicao = document.getElementById('modalRejeicao');
+    var modalRejeicao = document.getElementById('modalRejeicao');
     var modalDetalhes = document.getElementById('modalDetalhes');
-    
     if (event.target == modalRejeicao) fecharModal();
     if (event.target == modalDetalhes) fecharModalDetalhes();
     }

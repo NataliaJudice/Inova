@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\InnovaCore.Data\InnovaCore.Infra.Data.csproj" />
+    <ProjectReference Include="..\InnovaCore.Domain\InnovaCore.Domain.csproj" />
+    <ProjectReference Include="..\InnovaCore.Services\InnovaCore.Application.csproj" />
+  </ItemGroup>
+
+</Project>

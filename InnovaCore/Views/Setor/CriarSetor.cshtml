@@ -6,6 +6,7 @@
 }
 
 <style>
+    /* Seus estilos CSS permanecem iguais... */
     :root {
         --kanban-bg: #050505;
         --col-bg: #0d1117;
@@ -76,6 +77,7 @@
         transition: all 0.3s;
         width: 100%;
         margin-top: 20px;
+        cursor: pointer;
     }
 
         .btn-neon-save:hover {
@@ -98,6 +100,12 @@
         .btn-back:hover {
             color: var(--cyan-neon);
         }
+
+    .swal-cyber-popup {
+        border: 1px solid var(--border-color) !important;
+        border-radius: 24px !important;
+        background: var(--col-bg) !important;
+    }
 </style>
 
 <div class="container">
@@ -111,22 +119,21 @@
             <p class="text-white-50 small">Inicie um novo terminal de operações no sistema.</p>
         </div>
 
-        <form asp-action="CriarSetor" method="post">
+        <form id="formCriarSetor">
             @Html.AntiForgeryToken()
 
             <div class="mb-4">
                 <label class="detail-label">NOME DO SETOR</label>
-                <input asp-for="Nome" class="form-control-dark" placeholder="Ex: Tecnologia, RH, Financeiro..." required />
-                <span asp-validation-for="Nome" class="text-danger small"></span>
+                <input id="txtNomeSetor" class="form-control-dark" placeholder="Ex: Tecnologia, RH, Financeiro..." required />
             </div>
 
-            <input asp-for="EmailResponsavel" type="hidden" class="form-control-dark" placeholder="email@empresa.com" required value="exemplo@gmail.com"/>
-
-            @* <div class="mb-4">
+            @* Se você precisar do Email futuramente, descomente as linhas abaixo: *@
+            @*
+            <div class="mb-4">
                 <label class="detail-label">EMAIL DO RESPONSÁVEL</label>
-                <input asp-for="EmailResponsavel" type="email" class="form-control-dark" placeholder="email@empresa.com" required />
-                <span asp-validation-for="EmailResponsavel" class="text-danger small"></span>
-            </div> *@
+                <input id="txtEmailResponsavel" type="email" class="form-control-dark" placeholder="responsavel@empresa.com" required />
+            </div>
+            *@
 
             <div class="mt-2">
                 <button type="submit" class="btn-neon-save">
@@ -138,7 +145,81 @@
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.getElementById('formCriarSetor').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        Swal.fire({
+        title: 'Inicializar Terminal?',
+        text: "O novo setor será integrado à rede operacional do sistema.",
+        icon: 'question',
+        showCancelButton: true,
+        background: '#0d1117',
+        color: '#fff',
+        confirmButtonColor: '#00e5ff',
+        cancelButtonColor: '#30363d',
+        confirmButtonText: 'Confirmar',
+        cancelButtonText: 'Cancelar',
+        customClass: { popup: 'swal-cyber-popup' }
+        }).then((result) => {
+        if (result.isConfirmed) {
+        Swal.fire({
+        title: 'Alocando Recursos...',
+        allowOutsideClick: false,
+        didOpen: () => { Swal.showLoading(); },
+        background: '#0d1117',
+        color: '#fff',
+        customClass: { popup: 'swal-cyber-popup' }
+        });
+
+        // CORREÇÃO: Removido o campo inexistente txtEmailResponsavel
+        const payload = {
+        Nome: document.getElementById('txtNomeSetor').value
+        };
+
+        fetch('@Url.Action("CriarSetor", "Setor")', {
+        method: 'POST',
+        headers: {
+        'Content-Type': 'application/json',
+        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+        },
+        body: JSON.stringify(payload)
+        })
+        .then(response => {
+        if (!response.ok) {
+        throw new Error('Erro na resposta do servidor (Status: ' + response.status + ')');
+        }
+        return response.json();
+        })
+        .then(data => {
+        if(data.success) {
+        Swal.fire({
+        icon: 'success',
+        title: 'Terminal Conectado',
+        text: data.message,
+        background: '#0d1117',
+        color: '#fff',
+        confirmButtonColor: '#00e5ff',
+        customClass: { popup: 'swal-cyber-popup' }
+        }).then(() => {
+        window.location.href = data.redirectUrl;
+        });
+        } else {
+        Swal.fire({ icon: 'error', title: 'Falha no Registro', text: data.message, background: '#0d1117', color: '#fff' });
+        }
+        })
+        .catch((error) => {
+        Swal.fire({
+        icon: 'error',
+        title: 'Erro de Conexão',
+        text: error.message || 'Sem resposta da rede principal.',
+        background: '#0d1117',
+        color: '#fff'
+        });
+        });
+        }
+        });
+        });
+    </script>
 }
