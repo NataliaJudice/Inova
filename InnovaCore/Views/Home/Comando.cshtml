@@ -5,23 +5,26 @@
     ViewData["Title"] = "Terminal de Comando";
     Layout = "_Layout";
 
-    // Materialização segura da lista para uso no HTML e no JavaScript
-    var listaSetores = Model.VwQtdePorSetor as IEnumerable<InnovaCore.Domain.Entities.VwQtdePorSetor>
+    // Materialização segura da lista vinda do Join para uso no HTML e JavaScript
+    var listaSetores = Model?.VwQtdePorSetor as IEnumerable<InnovaCore.Domain.Entities.VwQtdePorSetor>
                        ?? new List<InnovaCore.Domain.Entities.VwQtdePorSetor>();
 
-    // 1. CÁLCULO MATEMÁTICO DINÂMICO DA TAXA DE CONCLUSÃO GLOBAL
-    double totalTarefas = Model.VwDashboardQtde.TotalDeTarefas;
-    double resolvidas = Model.VwDashboardQtde.TarefasConcluidas ; // Alinhado com a nomenclatura do seu banco/view
+    // Forçando conversão para double para evitar divisão inteira truncada em zero
+    double totalTarefas = Convert.ToDouble(Model?.VwDashboardQtde?.TotalDeTarefas ?? 0);
+    double resolvidas = Convert.ToDouble(Model?.VwDashboardQtde?.TarefasConcluidas ?? 0);
     double taxaConclusao = totalTarefas > 0 ? (resolvidas / totalTarefas) * 100 : 0;
+
+    // Captura o estado do filtro enviado pela Controller para manter a seleção visual correta
+    string periodoAtual = ViewBag.PeriodoSelecionado ?? "6meses";
 }
 
 <style>
     :root {
         --bg-black: #050505;
         --card-bg: #0d1117;
-        --accent-blue: #00e5ff; /* Trocado para o ciano neon padrão do seu sistema */
-        --accent-purple: #7000ff; /* Trocado para o roxo neon padrão */
-        --accent-green: #00ff9d; /* Verde neon */
+        --accent-blue: #00e5ff;
+        --accent-purple: #7000ff;
+        --accent-green: #00ff9d;
         --text-gray: #8b949e;
         --border-muted: #21262d;
     }
@@ -33,7 +36,6 @@
         overflow-x: hidden;
     }
 
-    /* --- ANIMAÇÕES --- */
     @@keyframes fadeInUp {
         from {
             opacity: 0;
@@ -50,7 +52,6 @@
         animation: fadeInUp 0.6s ease backwards;
     }
 
-    /* --- LAYOUT --- */
     .dashboard-wrapper {
         padding: 2.5rem 1.5rem;
         max-width: 1200px;
@@ -65,7 +66,24 @@
         animation: fadeInUp 0.5s ease;
     }
 
-    /* --- METRIC CARDS --- */
+    .filter-select {
+        background-color: #0d1117;
+        color: #f0f6fc;
+        border: 1px solid var(--border-muted);
+        border-radius: 8px;
+        padding: 0.6rem 1.2rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        outline: none;
+        cursor: pointer;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+        .filter-select:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.15);
+        }
+
     .metric-card {
         background: #0d1117;
         border: 1px solid var(--border-muted);
@@ -101,7 +119,6 @@
         margin-bottom: 1rem;
     }
 
-    /* --- CONTAINER DOS GRÁFICOS --- */
     .chart-container-print {
         background: #0d1117;
         border: 1px solid var(--border-muted);
@@ -112,10 +129,9 @@
         animation-delay: 0.4s;
     }
 
-    /* SOLUÇÃO PARA O AMONTROAMENTO: Container de rolagem responsivo */
     .chart-scroll-area {
         width: 100%;
-        overflow-x: auto; /* Adiciona barra de rolagem horizontal se necessário */
+        overflow-x: auto;
         overflow-y: hidden;
         padding-bottom: 5px;
     }
@@ -138,7 +154,7 @@
             }
 
     .chart-wrapper-inner {
-        min-width: 600px; /* Impede que as barras encolham menos do que o ideal */
+        min-width: 600px;
         height: 280px;
     }
 
@@ -150,23 +166,6 @@
         color: var(--text-gray);
     }
 
-    .btn-action-main {
-        background: #f0f6fc;
-        color: #0d1117;
-        font-weight: 700;
-        font-size: 0.75rem;
-        border-radius: 8px;
-        padding: 10px 24px;
-        border: none;
-        transition: transform 0.2s;
-        cursor: pointer;
-    }
-
-        .btn-action-main:hover {
-            transform: scale(1.05);
-        }
-
-    /* Centralização e posicionamento do valor interno do Donut */
     .donut-wrapper {
         position: relative;
         width: 200px;
@@ -188,15 +187,21 @@
 
 <div class="dashboard-wrapper">
     <div class="row align-items-center mb-5">
-        <div class="col-md-8">
+        <div class="col-md-7">
             <div class="dashboard-header">
                 <h1>Painel de Controle</h1>
                 <p class="text-secondary small mt-1">Telemetria de performance em tempo real.</p>
             </div>
         </div>
-        @* <div class="col-md-4 text-md-end">
-            <button class="btn btn-action-main" onclick="window.print()">GERAR RELATÓRIO</button>
-        </div> *@
+
+        <div class="col-md-5 text-md-end mt-3 mt-md-0">
+            <label class="label-caps me-2 d-block d-md-inline mb-2 mb-md-0">Mudar Período:</label>
+            <select id="filtroPeriodo" class="filter-select">
+                <!option value="mes" @(periodoAtual == "mes" ? "selected" : "")>Mês Atual</!option>
+                <!option value="6meses" @(periodoAtual == "6meses" ? "selected" : "")>Últimos 6 Meses</!option>
+                <!option value="ano" @(periodoAtual == "ano" ? "selected" : "")>Último Ano</!option>
+            </select>
+        </div>
     </div>
 
     <div class="row g-4 mb-5">
@@ -206,7 +211,7 @@
                     <i class="bi bi-people-fill"></i>
                 </div>
                 <div class="label-caps">Total de Tarefas</div>
-                <div class="metric-value text-white">@Model.VwDashboardQtde.TotalDeTarefas</div>
+                <div class="metric-value text-white">@totalTarefas</div>
             </div>
         </div>
         <div class="col-6 col-md-3 animate-card" style="animation-delay: 0.2s;">
@@ -215,7 +220,7 @@
                     <i class="bi bi-clock-fill"></i>
                 </div>
                 <div class="label-caps" style="color: var(--accent-purple);">Aguardando Resposta</div>
-                <div class="metric-value text-white">@Model.VwDashboardQtde.SolicitacoesPendentes</div>
+                <div class="metric-value text-white">@(Model?.VwDashboardQtde?.SolicitacoesPendentes ?? 0)</div>
             </div>
         </div>
         <div class="col-6 col-md-3 animate-card" style="animation-delay: 0.3s;">
@@ -224,7 +229,7 @@
                     <i class="bi bi-activity"></i>
                 </div>
                 <div class="label-caps" style="color: #00ff9d;">Em Andamento</div>
-                <div class="metric-value text-white">@Model.VwDashboardQtde.TarefasEmAndamento</div>
+                <div class="metric-value text-white">@(Model?.VwDashboardQtde?.TarefasEmAndamento ?? 0)</div>
             </div>
         </div>
         <div class="col-6 col-md-3 animate-card" style="animation-delay: 0.4s;">
@@ -233,7 +238,7 @@
                     <i class="bi bi-archive-fill"></i>
                 </div>
                 <div class="label-caps">A Fazer</div>
-                <div class="metric-value" style="color: #6e7681;">@Model.VwDashboardQtde.TarefasAComecar</div>
+                <div class="metric-value" style="color: #6e7681;">@(Model?.VwDashboardQtde?.TarefasAComecar ?? 0)</div>
             </div>
         </div>
     </div>
@@ -254,7 +259,7 @@
                 else
                 {
                     <div class="text-center w-100 py-5">
-                        <p class="text-secondary opacity-50 m-0">Aguardando telemetria operacional...</p>
+                        <p class="text-secondary opacity-50 m-0">Nenhuma telemetria operacional mapeada neste intervalo...</p>
                     </div>
                 }
             </div>
@@ -275,7 +280,7 @@
                 </div>
 
                 <div class="d-flex justify-content-around mt-2 border-top border-secondary pt-3 mx-2">
-                    <small class="text-secondary"><i class="bi bi-circle-fill me-1" style="color:var(--accent-green)"></i> Resolvidas: @Model.VwDashboardQtde.TarefasConcluidas</small>
+                    <small class="text-secondary"><i class="bi bi-circle-fill me-1" style="color:var(--accent-green)"></i> Resolvidas: @resolvidas</small>
                     <small class="text-secondary"><i class="bi bi-circle-fill me-1" style="color:#21262d"></i> Restantes: @(totalTarefas - resolvidas)</small>
                 </div>
             </div>
@@ -289,75 +294,78 @@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
 
-        // 2. CONFIGURAÇÃO DO GRÁFICO DE BARRAS (SETOR)
-        @if (listaSetores.Any())
-        {
-            // Serialização limpa dos dados Razor C# para Arrays do JavaScript
-            <text>
-                const labelsSetores = [@Html.Raw(string.Join(",", listaSetores.Select(x => $"'{System.Web.HttpUtility.JavaScriptStringEncode(x.Nome)}'")))];
-                const dadosQuantidades = [@string.Join(",", listaSetores.Select(x => x.QTDE_POR_SETOR ?? 0))];
+            const selectPeriodo = document.getElementById('filtroPeriodo');
+            selectPeriodo.addEventListener('change', function () {
+                const janelaTempo = this.value;
+                window.location.href = `@Url.Action("Comando", "Home")?periodo=${janelaTempo}`;
+            });
 
-                const ctxBarras = document.getElementById('ctxBarrasSetor').getContext('2d');
-                new Chart(ctxBarras, {
-                type: 'bar',
+            @if (listaSetores.Any())
+            {
+                    <text>
+                        const labelsSetores = [@Html.Raw(string.Join(",", listaSetores.Select(x => $"'{System.Web.HttpUtility.JavaScriptStringEncode(x.Nome)}'")))];
+                        const dadosQuantidades = [@string.Join(",", listaSetores.Select(x => x.QTDE_POR_SETOR ?? 0))];
+
+                        const ctxBarras = document.getElementById('ctxBarrasSetor').getContext('2d');
+                        new Chart(ctxBarras, {
+                            type: 'bar',
+                            data: {
+                                labels: labelsSetores,
+                                datasets: [{
+                                    label: 'Propostas',
+                                    data: dadosQuantidades,
+                                    backgroundColor: 'rgba(0, 229, 255, 0.85)',
+                                    borderColor: '#00e5ff',
+                                    borderWidth: 1,
+                                    borderRadius: 6,
+                                    barThickness: 28
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: { legend: { display: false } },
+                                scales: {
+                                    y: {
+                                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                                        ticks: { color: '#8b949e', stepSize: 1 }
+                                    },
+                                    x: {
+                                        grid: { display: false },
+                                        ticks: { color: '#8b949e', font: { size: 10 } }
+                                    }
+                                }
+                            }
+                        });
+                    </text>
+            }
+
+            const total = @totalTarefas;
+            const concluidas = @resolvidas;
+            const pendentes = total - concluidas;
+
+            const ctxDonut = document.getElementById('ctxDonutConclusao').getContext('2d');
+            new Chart(ctxDonut, {
+                type: 'doughnut',
                 data: {
-                labels: labelsSetores,
-                datasets: [{
-                label: 'Propostas',
-                data: dadosQuantidades,
-                backgroundColor: 'rgba(0, 229, 255, 0.85)',
-                borderColor: '#00e5ff',
-                borderWidth: 1,
-                borderRadius: 6,
-                barThickness: 28 // Força uma espessura de barra fixa elegante
-                }]
+                    labels: ['Concluídas', 'Pendentes'],
+                    datasets: [{
+                        data: [concluidas, total > 0 ? pendentes : 1],
+                        backgroundColor: [
+                            '#00ff9d',
+                            total > 0 ? '#1f2937' : '#0d1117'
+                        ],
+                        borderWidth: 0,
+                        hoverOffset: 0
+                    }]
                 },
                 options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                y: {
-                grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                ticks: { color: '#8b949e', stepSize: 1 }
-                },
-                x: {
-                grid: { display: false },
-                ticks: { color: '#8b949e', font: { size: 10 } }
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '80%',
+                    plugins: { legend: { display: false } }
                 }
-                }
-                }
-                });
-            </text>
-        }
-
-        // 3. CONFIGURAÇÃO DO GRÁFICO DONUT DINÂMICO
-        const total = @totalTarefas;
-        const concluidas = @resolvidas;
-        const pendentes = total - concluidas;
-
-        const ctxDonut = document.getElementById('ctxDonutConclusao').getContext('2d');
-        new Chart(ctxDonut, {
-        type: 'doughnut',
-        data: {
-        labels: ['Concluídas', 'Pendentes'],
-        datasets: [{
-        data: [concluidas, total > 0 ? pendentes : 1], // Previne quebra visual se o total for zero
-        backgroundColor: [
-        '#00ff9d', // Verde neon para tarefas prontas
-        total > 0 ? '#1f2937' : '#0d1117' // Cor vazia de fundo
-        ],
-        borderWidth: 0,
-        hoverOffset: 0
-        }]
-        },
-        options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        cutout: '80%', // Deixa a rosca interna fina e elegante
-        plugins: { legend: { display: false } }
-        }
-        });
+            });
         });
     </script>
 }
